@@ -1,0 +1,14 @@
+{% block body %}
+
+<body>
+
+	<p>Hello World</p>
+{#    {{ players }}#}
+    <ul>
+	{% for player in players %}
+    <li>{{ player.name }}, {{ player.position }}, {{ player.init_value }}</li>
+    {% endfor %}
+    </ul>
+</body>
+
+{% endblock %}
