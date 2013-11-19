@@ -1,0 +1,4 @@
+.idea
+*.pyc
+sftp-config.json
+local_settings.py
