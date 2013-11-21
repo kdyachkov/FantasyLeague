@@ -37,6 +37,7 @@ class Team(EmbeddedDocument):
     forwards = ListField(ReferenceField(Player, dbref=True))
     sustitutes = ListField(ReferenceField(Player))
     captain = ReferenceField(Player)
+    team_points = DecimalField()
 
 
 class User(Document):

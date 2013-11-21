@@ -1,6 +1,9 @@
+import json
 from django.shortcuts import render_to_response
 from django.template.context import RequestContext
+from django.http import HttpResponse
 from models import Player, WeeklyPoints, Team, User
+
 
 def index(request):
 
@@ -15,8 +18,8 @@ def index(request):
     user = User(name='Kostya Dyachkov', team = team)
     user.save()
 
-    players = Player.objects(name='Alex K.')
-    #players = Player.objects.all()
+    #players = Player.objects(name='Alex K.')
+    players = Player.objects.all()
     #for p in Player.objects.all():
     #    print p.name, p.weekly_points[0].goal_regulation
     for p in players:
@@ -25,3 +28,12 @@ def index(request):
         'players': players
         })
     return render_to_response('index.html', context_instance=context)
+
+
+def get_players(request):
+    players = Player.objects.all()
+
+    players = [p for p in players]
+
+    response = json.dumps({'players': players})
+    return HttpResponse(response, mimetype='application/json')

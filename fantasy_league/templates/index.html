@@ -1,14 +1,39 @@
+{% extends 'base.html' %}
 {% block body %}
 
 <body>
 
-	<p>Hello World</p>
-{#    {{ players }}#}
-    <ul>
-	{% for player in players %}
-    <li>{{ player.name }}, {{ player.position }}, {{ player.init_value }}</li>
-    {% endfor %}
-    </ul>
+{% verbatim %}
+<div ng-app="">
+  <div ng-controller="FirstCtrl">
+  <ul ng-repeat="player in data.players">
+  	<li>{{player}}</li>
+  </ul>
+
+
+
+  <h1>{{data.message}}</h1>
+  </div>
+</div>
+{% endverbatim %}
+
+
+    <div class="players_table" style="width: 700px">
+        <table class="table table-hover">
+            <tbody>
+            {% for player in players %}
+            <tr>
+                <td>{{ player.name }}</td>
+                <td>{{ player.position }}</td>
+                <td>{{ player.value }}</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+
+        </table>
+    </div>
+    
+    
 </body>
 
 {% endblock %}
