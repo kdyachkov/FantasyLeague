@@ -10,20 +10,20 @@
 		<div class="row">
 		  <div class="col-md-6">
 		  	<div class='goalkeaper'>
-		  		<player position="GK" ng-click="udatePlayersTable('GK')"></player>
+		  		<position position="GK" ng-click="udatePlayersTable('GK')"></position>
 			</div>
 			<div class='defenders'>
-                <player position="D" ng-click="udatePlayersTable('D')"></player>
-                <player position="D" ng-click="udatePlayersTable('D')"></player>
-				<player position="D" ng-click="udatePlayersTable('D')"></player>
+                <position position="D" ng-click="udatePlayersTable('D')"></position>
+                <position position="D" ng-click="udatePlayersTable('D')"></position>
+				<position position="D" ng-click="udatePlayersTable('D')"></position>
 			</div>
 			<div class='midfielders'>
-                <player position="M" ng-click="udatePlayersTable('M')"></player>
-                <player position="M" ng-click="udatePlayersTable('M')"></player>
-                <player position="M" ng-click="udatePlayersTable('M')"></player>
+                <position position="M" ng-click="udatePlayersTable('M')"></position>
+                <position position="M" ng-click="udatePlayersTable('M')"></position>
+                <position position="M" ng-click="udatePlayersTable('M')"></position>
 			</div>
 			<div class='forwards'>
-				<player position="F" ng-click="udatePlayersTable('F')"></player>
+				<position position="F" ng-click="udatePlayersTable('F')"></position>
 			</div>
 		  </div>
 		  <div class="col-md-6">
@@ -35,7 +35,9 @@
     			            <td>{{ player.name }}</td>
     			            <td>{{ player.position }}</td>
     			            <td>{{ player.init_value }}</td>
-                            <td> <button class='btn btn-primary' ng-click = "addPlayer(player)">Add</button> <button class='btn btn-info'>Info</button> </td>
+                            <td> 
+                                <player player="player" position="{{positionsToShow}}"></player>
+                            </td>
     			        </tr>
     			    </table>
                 </div>
