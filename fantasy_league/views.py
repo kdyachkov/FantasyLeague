@@ -22,8 +22,9 @@ def index(request):
     players = Player.objects.all()
     #for p in Player.objects.all():
     #    print p.name, p.weekly_points[0].goal_regulation
-    for p in players:
-        print p.name, p.init_value
+    players = [(p.name, p.position, p.init_value) for p in players]
+    #for p in players:
+    #    print p.name, p.init_value
     context = RequestContext(request, {
         'players': players
         })
@@ -33,7 +34,7 @@ def index(request):
 def get_players(request):
     players = Player.objects.all()
 
-    players = [p for p in players]
+    players = [{'id':str(p.id), 'name' : p.name, 'position':p.position, 'init_value': str(p.init_value)} for p in players]
 
     response = json.dumps({'players': players})
     return HttpResponse(response, mimetype='application/json')
