@@ -21,7 +21,7 @@ myApp.factory('Players', function($http){
 
 myApp.factory('Team', function(){
     var Team = {};
-    Team.goalkeaper = '';
+    Team.goalkeaper = [];
     Team.defenders = [];
     Team.midfielders = [];
     Team.forwards = []
@@ -31,10 +31,20 @@ myApp.factory('Team', function(){
     Team.maxDefenders = 3;
     Team.maxMidfielders = 3;
     Team.maxForwards = 1;
+    Team.maxValueToSpend = 50;
 
     Team.addPlayer = function(player, position){
         if (Team.allPlayers.length >= Team.maxPlayers){
             alert("Cannot add any more players")
+            return false;
+        }
+        if (_.contains(Team.allPlayers, player)){
+            alert("Cannot add the same player twice");
+            return false
+        }
+        if((Team.getTotalValue() + Number(player.init_value)) > Team.maxValueToSpend){
+            console.log((Team.getTotalValue() + player.init_value))
+            alert("Cannot add player, insufficient funds");
             return false;
         }
         isAdded = false;
@@ -67,7 +77,11 @@ myApp.factory('Team', function(){
     }
 
     Team.addGoalkeaper = function(player){
-        Team.goalkeaper = player;
+        if (Team.goalkeaper.length >= Team.maxGoalkeepers){
+            alert("Cannot add any more goalkeapers")
+            return false;
+        }
+        Team.goalkeaper.push(player);
         return true
     };
 
@@ -100,19 +114,19 @@ myApp.factory('Team', function(){
 
     Team.removePlayer = function(player, position){
         Team.allPlayers = _.without(Team.allPlayers, player)
-        if(position=='GK'){
-            Team.goalkeaper = _.without(Team.goalkeaper, player)
-        }
-        else if (position==='D'){
-            Team.defenders = _.without(Team.defenders, player)
-        }
-        else if (position==='M'){
-            Team.midfielders = _.without(Team.midfielders, player)
-        }
-        else if (position==='F'){
-            Team.forwards = _.without(Team.forwards, player)
-        }
+        Team.goalkeaper = _.without(Team.goalkeaper, player)
+        Team.defenders = _.without(Team.defenders, player)
+        Team.midfielders = _.without(Team.midfielders, player)
+        Team.forwards = _.without(Team.forwards, player)
         return true;
+    }
+
+    Team.getTotalValue = function(){
+        var total = 0;
+        _.each(Team.allPlayers,function(player){
+            total += Number(player.init_value);
+        })
+        return total;
     }
 
     return Team
@@ -121,7 +135,7 @@ myApp.factory('Team', function(){
 
 function PlayersCtrl($scope, Players, Team){
     $scope.allPlayers = Players;
-    $scope.positionsToShow = 'ALL'
+    $scope.positionsToShow = ''
     $scope.getPlayers = function(){
         if ($scope.positionsToShow === 'ALL'){
             return $scope.allPlayers.players;
@@ -147,5 +161,10 @@ function PlayersCtrl($scope, Players, Team){
 }
 
 function TeamCtrl($scope, Team){
-
-}
+    $scope.showAllPlayers = function(){
+        return Team.allPlayers;
+    }
+    $scope.getTotalValue = function(){
+        return Team.getTotalValue()
+    }
+} 

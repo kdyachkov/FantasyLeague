@@ -12,13 +12,14 @@ myApp.directive("position", function(){
             }
             $scope.getPositionFull = function(){
                 pos = $scope.position;
-                if(pos === 'GK'){return 'Goalkeeper'}
-                else if(pos === 'D'){return 'Defender'}
-                else if(pos === 'M'){return 'Midfielder'}
-                else if(pos === 'F'){return 'Forward'}
+                if(pos === 'ALL'){return 'All'}
+                else if(pos === 'GK'){return 'Goalkeepers'}
+                else if(pos === 'D'){return 'Defenders'}
+                else if(pos === 'M'){return 'Midfielders'}
+                else if(pos === 'F'){return 'Forwards'}
             }
         },
-        template:  "<button class ='btn btn-primary'>Add {{getPositionFull()}}</button>"
+        template:  "<button class ='btn btn-primary'>Show {{getPositionFull()}}</button>"
     }
 });
 
@@ -39,8 +40,14 @@ myApp.directive('player', function(Team){
             $scope.isAdded = function(){
                 return _.contains(Team.allPlayers, $scope.player)
             }
+            $scope.isAffordable = function(){
+                if((Team.getTotalValue() + Number($scope.player.init_value)) > Team.maxValueToSpend){
+                    return false;
+                }
+                return true;
+            }
         },
-        template: "<button class='btn btn-primary' ng-click='addPlayer()' ng-show='!isAdded()'>Add</button>\
+        template: "<button class='btn btn-primary' ng-click='addPlayer()' ng-disabled='!isAffordable()' ng-show='!isAdded()'>Add</button>\
                     <button class='btn btn-danger' ng-click='removePlayer()' ng-show='isAdded()'>Remove</button>\
                     <button class='btn btn-info'>Info</button> "
     }
