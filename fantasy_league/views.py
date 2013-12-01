@@ -32,9 +32,22 @@ def index(request):
 
 
 def get_players(request):
-    players = Player.objects.all()
+    players_obj = Player.objects.all()
 
-    players = [{'id':str(p.id), 'name' : p.name, 'position':p.position, 'init_value': str(p.init_value)} for p in players]
+    # players = [{'id':str(p.id), 'name' : p.name, 'position':p.position, 'init_value': str(p.init_value)} for p in players]
+
+    players = []
+    for player in players_obj:
+        d = {
+            'id': str(player.id),
+            'name': player.name,
+            'init_value': str(player.init_value),
+            'position': player.position,
+            'primary_position': player.position[0]
+        }
+        players.append(d)
+
+    # players = [{'id':str(p.id), 'name' : p.name, 'primary_position':p.position[0], 'secondary_position': p.position[1] if len(p.position)>1 else '', 'third_position':len(p.position)>2 if p.position[3] else '', 'init_value': str(p.init_value)} for p in players]
 
     response = json.dumps({'players': players})
     return HttpResponse(response, mimetype='application/json')

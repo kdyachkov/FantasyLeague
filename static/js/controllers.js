@@ -7,6 +7,10 @@ myApp.factory('Players', function($http){
     $http({method: 'GET', url: url}).
         success(function(data, status, headers, config) {
             Players.players = data['players']
+            Players.goalkeapers = _.filter(Players.players, function(player){ return player.primary_position == 'GK'})
+            Players.defenders = _.filter(Players.players, function(player){ return player.primary_position == 'D'})
+            Players.midfielders = _.filter(Players.players, function(player){ return player.primary_position == 'M'})
+            Players.forwards = _.filter(Players.players, function(player){ return player.primary_position == 'F'})
             // this callback will be called asynchronously
             // when the response is available
         }).
@@ -14,6 +18,16 @@ myApp.factory('Players', function($http){
             // called asynchronously if an error occurs
             // or server returns response with an error status.
         });
+
+    Players.playersToShow = ''
+    Players.getPlayersToShow = function(){
+        if (Players.playersToShow === ''){return []}
+        else if (Players.playersToShow === 'ALL'){return Players.players}
+        else if (Players.playersToShow === 'GK'){return Players.goalkeapers}
+        else if (Players.playersToShow === 'D'){return Players.defenders}
+        else if (Players.playersToShow === 'M'){return Players.midfielders}
+        else if (Players.playersToShow === 'F'){return Players.forwards}
+    }
 
     return Players;
 
@@ -34,6 +48,8 @@ myApp.factory('Team', function(){
     Team.maxValueToSpend = 50;
 
     Team.addPlayer = function(player, position){
+        console.log("IN HERE")
+        console.log(position)
         if (Team.allPlayers.length >= Team.maxPlayers){
             alert("Cannot add any more players")
             return false;
@@ -53,6 +69,7 @@ myApp.factory('Team', function(){
                 isAdded = Team.addGoalkeaper(player);
                 break;
             case('D'):
+                console.log("IN HERE2")
                 isAdded = Team.addDefender(player);
                 break;
             case('M'):
@@ -65,10 +82,10 @@ myApp.factory('Team', function(){
 
         if (isAdded==true){
             Team.allPlayers.push(player)
-            console.log(Team.goalkeaper)
-            console.log(Team.defenders)
-            console.log(Team.midfielders)
-            console.log(Team.forwards)
+            // console.log(Team.goalkeaper)
+            // console.log(Team.defenders)
+            // console.log(Team.midfielders)
+            // console.log(Team.forwards)
             return true;
         }
         else{
@@ -91,6 +108,7 @@ myApp.factory('Team', function(){
             return false;
         }
         Team.defenders.push(player);
+        console.log('HERE')
         return true;
     };
 
@@ -129,29 +147,36 @@ myApp.factory('Team', function(){
         return total;
     }
 
+    Team.getPositionLine = function(position){
+        if(position=='GK'){
+            return [Team.goalkeaper, Team.maxGoalkeepers]
+        }
+        else if(position=='D'){
+            return [Team.defenders, Team.maxDefenders]
+        }
+        else if(position=='M'){
+            return [Team.midfielders, Team.maxMidfielders]
+        }
+        else if(position=='F'){
+            return [Team.forwards, Team.maxForwards]
+        }
+    }
+
     return Team
 });
 
 
 function PlayersCtrl($scope, Players, Team){
     $scope.allPlayers = Players;
-    $scope.positionsToShow = ''
+    $scope.positionsToShow = function(){
+        return Players.playersToShow;
+    }
     $scope.getPlayers = function(){
-        if ($scope.positionsToShow === 'ALL'){
-            return $scope.allPlayers.players;
-        }
-        else{
-            players = _.filter($scope.allPlayers.players, 
-                function(player){
-                    return _.contains(player.position, $scope.positionsToShow);
-                }
-            )
-            return players;    
-        }
+        return Players.getPlayersToShow()
     };
     $scope.udatePlayersTable = function(posToShow){
-        $scope.positionsToShow = posToShow;
-        $scope.getPlayers()
+        Players.playersToShow = posToShow;
+        // $scope.getPlayers()
     }
 
     $scope.addPlayer = function(player){
@@ -161,9 +186,39 @@ function PlayersCtrl($scope, Players, Team){
 }
 
 function TeamCtrl($scope, Team){
+    
     $scope.showAllPlayers = function(){
+        console.log(Team.allPlayers)
         return Team.allPlayers;
     }
+
+    $scope.getGoalkeeper = function(){
+        return Team.goalkeaper
+    }
+    $scope.getMaxGoalkeepers = function(){
+        return Team.maxGoalkeepers;
+    }
+    $scope.getDefenders = function(){
+        return Team.defenders;
+    }
+    $scope.getMaxDefenders = function(){
+        // console.log("HERE")
+        return Team.maxDefenders;
+    }
+    $scope.getMidfielders = function(){
+        return Team.midfielders;
+    }
+    $scope.getMaxMidfielders = function(){
+        return Team.maxMidfielders;
+    }
+    $scope.getForwards = function(){
+        return Team.forwards;
+    }
+    $scope.getMaxForwards = function(){
+        return Team.maxForwards;
+    }
+
+
     $scope.getTotalValue = function(){
         return Team.getTotalValue()
     }

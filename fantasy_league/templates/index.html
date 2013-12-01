@@ -7,9 +7,48 @@
 	<div class='container'>
 		<div class="row">
 		  <div class="col-md-6" ng-controller="TeamCtrl">
-            <ul ng-repeat="player in showAllPlayers()">
+            <!-- <ul ng-repeat="player in showAllPlayers()">
                 <li>{{player.name}} - {{player.position}} - {{player.init_value}}</li>
-            </ul>
+            </ul> -->
+
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered table-condensed">
+                    <tr>
+                        <td>Goalkeeper</td>
+                        <td><teamplayer players='getGoalkeeper()'></teamplayer>
+
+                        <button class="btn" data-ng-repeat="i in [] | range:10">Add</button>
+
+                        {{getMaxGoalkeepers() - getGoalkeeper().length}}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Defenders</td>
+                        <td><teamplayer players='getDefenders()'></teamplayer>
+                        <!-- <teamplayer position='D' players='getDefenders()' maxplayers='getMaxDefenders()'></teamplayer> -->
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Midfielders</td>
+                        <td><teamplayer players='getMidfielders()'></teamplayer></td>
+                    </tr>
+                    <tr>
+                        <td>Forwards</td>
+                        <td><teamplayer players='getForwards()'></teamplayer></td>
+                    </tr>
+                    <tr>
+                        <td>Bench</td>
+                        <td><teamplayer players='getBenchPlayers()'></teamplayer></td>
+                    </tr>
+                </table>
+            </div>
+
+            <div>
+<!--             Goalkeeper - {{getGoalkeeper()}}
+            Defenders - {{getDefenders()}} -->
+
+            </div>
+
             <div>Total value used {{getTotalValue()}}</div>
             <!-- <div>{{showAllPlayers()}}</div> -->
 		  </div>
@@ -23,12 +62,12 @@
 			    <!-- <input type="text" ng-model="search.position"> -->
                 <div class="table-responsive">
     			    <table class="table table-striped table-bordered table-condensed players-table">
-    			        <tr ng-repeat="player in getPlayers('ALL') | filter:search">
+    			        <tr ng-repeat="player in getPlayers() | orderBy:name">
     			            <td>{{ player.name }}</td>
     			            <td>{{ player.position }}</td>
     			            <td>{{ player.init_value }}</td>
                             <td> 
-                                <player player="player" position="{{positionsToShow}}"></player>
+                                <player player="player" position="{{positionsToShow()}}"></player>
                             </td>
     			        </tr>
     			    </table>
