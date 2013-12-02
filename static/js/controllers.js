@@ -27,6 +27,7 @@ myApp.factory('Players', function($http){
         else if (Players.playersToShow === 'D'){return Players.defenders}
         else if (Players.playersToShow === 'M'){return Players.midfielders}
         else if (Players.playersToShow === 'F'){return Players.forwards}
+        else if (Players.playersToShow === 'S'){return Players.players}
     }
 
     return Players;
@@ -38,18 +39,26 @@ myApp.factory('Team', function(){
     Team.goalkeaper = [];
     Team.defenders = [];
     Team.midfielders = [];
-    Team.forwards = []
+    Team.forwards = [];
+    Team.subs = [];
     Team.allPlayers = []
     Team.maxPlayers = 8;
     Team.maxGoalkeepers = 1;
-    Team.maxDefenders = 3;
-    Team.maxMidfielders = 3;
+    Team.maxDefenders = 2;
+    Team.maxMidfielders = 2;
     Team.maxForwards = 1;
+    Team.maxSubs = 2;
     Team.maxValueToSpend = 50;
 
+    Team.players = {}
+    Team.players['GK'] = Team.goalkeaper;
+    Team.players['D'] = Team.defenders;
+    Team.players['M'] = Team.midfielders;
+    Team.players['F'] = Team.forwards;
+    Team.players['S'] = Team.subs;
+
+
     Team.addPlayer = function(player, position){
-        console.log("IN HERE")
-        console.log(position)
         if (Team.allPlayers.length >= Team.maxPlayers){
             alert("Cannot add any more players")
             return false;
@@ -69,7 +78,6 @@ myApp.factory('Team', function(){
                 isAdded = Team.addGoalkeaper(player);
                 break;
             case('D'):
-                console.log("IN HERE2")
                 isAdded = Team.addDefender(player);
                 break;
             case('M'):
@@ -78,14 +86,13 @@ myApp.factory('Team', function(){
             case('F'):
                 isAdded = Team.addForward(player);
                 break;
+            case('S'):
+                isAdded = Team.addSub(player);
+                break;
         }
 
         if (isAdded==true){
             Team.allPlayers.push(player)
-            // console.log(Team.goalkeaper)
-            // console.log(Team.defenders)
-            // console.log(Team.midfielders)
-            // console.log(Team.forwards)
             return true;
         }
         else{
@@ -101,17 +108,14 @@ myApp.factory('Team', function(){
         Team.goalkeaper.push(player);
         return true
     };
-
     Team.addDefender = function(player){
         if (Team.defenders.length >= Team.maxDefenders){
             alert("Cannot add any more defenders")
             return false;
         }
         Team.defenders.push(player);
-        console.log('HERE')
         return true;
     };
-
     Team.addMidfielder = function(player){
         if (Team.midfielders.length >= Team.maxMidfielders){
             alert("Cannot add any more midfielders")
@@ -120,13 +124,20 @@ myApp.factory('Team', function(){
         Team.midfielders.push(player);
         return true;
     };
-    
     Team.addForward = function(player){
         if (Team.forwards.length >= Team.maxForwards){
             alert("Cannot add any more forwards")
             return false;
         }
         Team.forwards.push(player);
+        return true;
+    };
+    Team.addSub = function(player){
+        if (Team.subs.length >= Team.maxSubs){
+            alert("Cannot add any more subs")
+            return false;
+        }
+        Team.subs.push(player);
         return true;
     }
 
@@ -136,6 +147,7 @@ myApp.factory('Team', function(){
         Team.defenders = _.without(Team.defenders, player)
         Team.midfielders = _.without(Team.midfielders, player)
         Team.forwards = _.without(Team.forwards, player)
+        Team.subs = _.without(Team.subs, player)
         return true;
     }
 
@@ -147,26 +159,35 @@ myApp.factory('Team', function(){
         return total;
     }
 
-    Team.getPositionLine = function(position){
+    Team.getPositionPlayersToAdd = function(position){
         if(position=='GK'){
-            return [Team.goalkeaper, Team.maxGoalkeepers]
+            return Team.maxGoalkeepers - Team.goalkeaper.length
         }
         else if(position=='D'){
-            return [Team.defenders, Team.maxDefenders]
+            return Team.maxDefenders - Team.defenders.length
         }
         else if(position=='M'){
-            return [Team.midfielders, Team.maxMidfielders]
+            return Team.maxMidfielders - Team.midfielders.length
         }
         else if(position=='F'){
-            return [Team.forwards, Team.maxForwards]
+            return Team.maxForwards - Team.forwards.length
         }
+        else if(position=='S'){
+            return Team.maxSubs - Team.subs.length
+        }
+    }
+
+    Team.getPlayersForPosition = function(position){
+
     }
 
     return Team
 });
 
 
-function PlayersCtrl($scope, Players, Team){
+function PlayersCtrl($scope, $rootScope, Players, Team){
+    $rootScope._ = _
+
     $scope.allPlayers = Players;
     $scope.positionsToShow = function(){
         return Players.playersToShow;
@@ -217,9 +238,12 @@ function TeamCtrl($scope, Team){
     $scope.getMaxForwards = function(){
         return Team.maxForwards;
     }
-
-
+    $scope.getSubs = function(){
+        return Team.subs
+    }
     $scope.getTotalValue = function(){
         return Team.getTotalValue()
     }
+
+    $scope.test = 3;
 } 
