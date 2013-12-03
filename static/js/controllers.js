@@ -1,10 +1,35 @@
+myApp.factory('SharedService', function($rootScope, $http){
+    var SharedService = {};
 
-myApp.factory('Players', function($http){
+    SharedService.broadcastItem = function(name, args) {
+        $rootScope.$broadcast(name, args);
+    };
+
+    SharedService.makePOSTRequest = function(url, data){
+        return this.makeRequest('POST', url, data)
+    };
+    SharedService.makeGETRequest = function(url, data){
+        return this.makeRequest('GET', url, data)
+    };
+    SharedService.makeRequest = function(rtype, url, data){
+        var headers =  {'X-CSRFToken' : window.CSRF_TOKEN };
+        return $http({method: rtype, url: url, data: $.param(data || {}), headers: headers})
+    };
+
+    return SharedService;
+});
+
+
+
+
+
+myApp.factory('Players', function(SharedService){
     var Players = {};
 
     var method = 'POST';
     var url = '/get_players/';
-    $http({method: 'GET', url: url}).
+    // $http({method: 'GET', url: url}).
+    SharedService.makeGETRequest(url).
         success(function(data, status, headers, config) {
             Players.players = data['players']
             Players.goalkeapers = _.filter(Players.players, function(player){ return player.primary_position == 'GK'})
@@ -34,7 +59,7 @@ myApp.factory('Players', function($http){
 
 });
 
-myApp.factory('Team', function(){
+myApp.factory('Team', function(SharedService){
     var Team = {};
     Team.goalkeaper = [];
     Team.defenders = [];
@@ -177,8 +202,16 @@ myApp.factory('Team', function(){
         }
     }
 
-    Team.getPlayersForPosition = function(position){
-
+    Team.saveTeam = function(){
+        var url = '/save_team/'
+        SharedService.makePOSTRequest(url, {players: Team.players}).
+            success(function(data, status, headers, config) {
+                console.log(data)
+        }).
+        error(function(data, status, headers, config) {
+            // called asynchronously if an error occurs
+            // or server returns response with an error status.
+        });
     }
 
     return Team
@@ -245,5 +278,7 @@ function TeamCtrl($scope, Team){
         return Team.getTotalValue()
     }
 
-    $scope.test = 3;
+    $scope.saveTeam = function(){
+        Team.saveTeam()
+    }
 } 

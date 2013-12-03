@@ -2,6 +2,7 @@ import json
 from django.shortcuts import render_to_response
 from django.template.context import RequestContext
 from django.http import HttpResponse
+from django.views.decorators.csrf import csrf_exempt
 from models import Player, WeeklyPoints, Team, User
 
 
@@ -51,3 +52,8 @@ def get_players(request):
 
     response = json.dumps({'players': players})
     return HttpResponse(response, mimetype='application/json')
+
+@csrf_exempt
+def save_team(request):
+    team = request.POST.get('players')
+    return HttpResponse(status=200)
