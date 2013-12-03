@@ -55,49 +55,19 @@ myApp.directive('player', function(Team){
     }
 })
 
-myApp.directive('teamplayer', function(Team){
+myApp.directive('teamplayers', function(Team){
     return {
         restrict: 'E',
         scope: {
             players: '='
         },
         controller: function($scope){
-            $scope.controlBoxForPlayer = {}
-
-            $scope.showControlBox = function(player){
-                console.log(player)
-                console.log($scope.controlBoxForPlayer[player])
-                console.log($scope.controlBoxForPlayer)
-                if ($scope.controlBoxForPlayer[player] == 'undefined'){
-                    $scope.controlBoxForPlayer[player] = false    
-                }
-                else if ($scope.controlBoxForPlayer[player] == true){
-                    $scope.controlBoxForPlayer[player] = false    
-                }
-                else{
-                    $scope.controlBoxForPlayer[player] = true
-                }
-
-                console.log($scope.controlBoxForPlayer[player])
-                
-            }
-            $scope.shouldShowControlBox = function(player){
-                console.log("SHOULD SHOW?")
-                console.log(player)
-                console.log($scope.controlBoxForPlayer[player])
-                return $scope.controlBoxForPlayer[player]
-            }
-            $scope.removePlayer = function(player){
-                console.log("HERE");
-                console.log(player)
-                Team.removePlayer(player, $scope.position)
-            }
-            // $scope.showPlayers = function(){
-            //     return Team.players[$scope.position]
-            // }
+            
+            
+            
         },
         // template: "blahblah"
-        template: "<div class='teamplayer' ng-repeat='player in players'>\
+        template: "<div class='teamplayers' ng-repeat='player in players'>\
             <button class='btn btn-success' ng-click='showControlBox(player)'>{{player.name}} ({{player.init_value}})</button>\
             <div class='alert alert-danger' ng-show='shouldShowControlBox(player)'>\
                 <button class='btn btn-danger' ng-click='removePlayer(player)'>Remove</button>\
@@ -113,6 +83,31 @@ myApp.directive('teamplayer', function(Team){
         // }
     }
 })
+
+
+myApp.directive('teamplayer', function(Team){
+    return{
+        restrict: 'E',
+        scope:{
+            player: '=',
+        },
+        controller: function($scope){
+            $scope.showControlBox = false;
+            $scope.toggleControlBox = function(){
+                $scope.showControlBox = !$scope.showControlBox
+            }
+            $scope.removePlayer = function(player){
+                Team.removePlayer(player)
+            }
+        },
+        template: "<button class='btn btn-success' ng-click='toggleControlBox()'>{{player.name}} ({{player.init_value}})</button>\
+                    <div class='alert alert-danger' ng-show='showControlBox'>\
+                        <button class='btn btn-danger' ng-click='removePlayer(player)'>Remove</button>\
+                        <button class='btn btn-info'>Info</button>\
+                    </div>"
+    }
+})
+
 
 myApp.directive('addplayers', function(Players, Team){
     return {

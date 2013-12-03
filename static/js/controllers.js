@@ -141,7 +141,7 @@ myApp.factory('Team', function(){
         return true;
     }
 
-    Team.removePlayer = function(player, position){
+    Team.removePlayer = function(player){
         Team.allPlayers = _.without(Team.allPlayers, player)
         Team.goalkeaper = _.without(Team.goalkeaper, player)
         Team.defenders = _.without(Team.defenders, player)
