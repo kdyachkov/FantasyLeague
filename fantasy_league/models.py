@@ -31,11 +31,11 @@ class Player(Document):
 
 class Team(EmbeddedDocument):
     name = StringField(required=True)
-    goalkeaper = ReferenceField(Player)
+    goalkeeper = ReferenceField(Player)
     defenders = ListField(ReferenceField(Player))
     midfielders = ListField(ReferenceField(Player))
     forwards = ListField(ReferenceField(Player, dbref=True))
-    sustitutes = ListField(ReferenceField(Player))
+    subs = ListField(ReferenceField(Player))
     captain = ReferenceField(Player)
     team_points = DecimalField()
 

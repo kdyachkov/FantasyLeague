@@ -12,12 +12,12 @@ def index(request):
     #p1 = Player(name='Alex', init_value = 5.5, points = 0, weekly_points=[w1])
     #print p1
     #p1.save()
-    karasik = Player.objects(name='Alex K.')[0]
-    print karasik
-    team = Team(name='Kostya FC', goalkeaper=karasik, forwards=[karasik])
-    print team.name, team.goalkeaper
-    user = User(name='Kostya Dyachkov', team = team)
-    user.save()
+    #karasik = Player.objects(name='Alex K.')[0]
+    #print karasik
+    #team = Team(name='Kostya FC', goalkeaper=karasik, forwards=[karasik])
+    #print team.name, team.goalkeaper
+    #user = User(name='Kostya Dyachkov', team = team)
+    #user.save()
 
     #players = Player.objects(name='Alex K.')
     players = Player.objects.all()
@@ -53,7 +53,69 @@ def get_players(request):
     response = json.dumps({'players': players})
     return HttpResponse(response, mimetype='application/json')
 
+
+def get_team(request):
+    team_name = request.POST.get('team_name')
+    if not team_name:
+        return HttpResponse(status=500)  # TODO: return correct error
+
+    team_obj = Team.objects.get(name=team_name)
+    goalkeeper = team_obj.goalkeeper
+    defenders = team_obj.defenders
+    midfielders = team_obj.midfielders
+    forwards = team_obj.forwards
+    subs = team_obj.subs
+
+    team_dict = {
+        'goalkeer': goalkeeper,
+        'defenders': defenders,
+        'midfielders': midfielders,
+        'forwards': forwards,
+        'subs': subs
+    }
+
+    response = json.dumps({'team': team_dict})
+    return HttpResponse(response, mimetype='application/json')
+
+
 @csrf_exempt
 def save_team(request):
-    team = request.POST.get('players')
+    team_str = request.POST.get('team')
+    team_json = json.loads(team_str)
+    goalkeeper = team_json['GK']
+    defenders = team_json['D']
+    midfielders = team_json['M']
+    forwards = team_json['F']
+    subs = team_json['S']
+
+
+    team_name = 'TestFC'
+    team = Team(name=team_name)
+
+    if goalkeeper:
+        goalkeeper = Player.objects(id=goalkeeper[0]['id'])[0]
+        team.goalkeeper = goalkeeper
+    if defenders:
+        defenders_objs = [Player.objects(id=defender['id']) for defender in defenders]
+        team.defenders = defenders_objs
+    if midfielders:
+        midfielders_objs = [Player.objects(id=midfielder['id']) for midfielder in midfielders]
+        team.midfielders = midfielders_objs
+    if forwards:
+        forwards_objs = [Player.objects(id=forward['id']) for forward in forwards]
+        team.forwards = forwards_objs
+    if subs:
+        subs_objs = [Player.objects(id=sub['id']) for sub in subs]
+        team.subs = subs_objs
+
+    user = User(name='Kostya Dyachkov', team=team)
+    user.save()
+
+
+    print goalkeeper
+    print defenders
+    print midfielders
+    print forwards
+    print subs
+
     return HttpResponse(status=200)

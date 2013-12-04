@@ -203,8 +203,11 @@ myApp.factory('Team', function(SharedService){
     }
 
     Team.saveTeam = function(){
+        console.log(Team.players)
+        var team = JSON.stringify(Team.players)
+        console.log(team)
         var url = '/save_team/'
-        SharedService.makePOSTRequest(url, {players: Team.players}).
+        SharedService.makePOSTRequest(url, {team: team}).
             success(function(data, status, headers, config) {
                 console.log(data)
         }).
