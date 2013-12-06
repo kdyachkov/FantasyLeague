@@ -12,4 +12,5 @@ admin.autodiscover()
 # )
 urlpatterns = patterns('',
                        (r'^admin/', include(admin.site.urls)),
-                       (r'^', include('fantasy_league.urls')),)
+                       (r'^', include('fantasy_league.urls')),
+                       url(r'', include('social_auth.urls')),)

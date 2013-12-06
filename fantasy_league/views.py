@@ -3,6 +3,7 @@ from django.shortcuts import render_to_response
 from django.template.context import RequestContext
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.conf import settings
 from models import Player, WeeklyPoints, Team, User
 from libs import general
 
@@ -69,7 +70,8 @@ def get_team(request):
         'defenders': defenders,
         'midfielders': midfielders,
         'forwards': forwards,
-        'subs': subs
+        'subs': subs,
+        'max_team_starting_value': settings.MAX_TEAM_STARTING_VALUE
     }
 
     response = json.dumps({'team': team_dict})

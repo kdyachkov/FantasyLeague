@@ -3,9 +3,12 @@
 
 <body>
 
+            <a href="{% url 'socialauth_begin' 'google-oauth2' %}">Login with Google</a>
+
 {% verbatim %}
 	<div class='container'>
 		<div class="row">
+
 		  <div class="col-md-6" ng-controller="TeamCtrl">
             <!-- <ul ng-repeat="player in showAllPlayers()">
                 <li>{{player.name}} - {{player.position}} - {{player.init_value}}</li>
@@ -69,7 +72,7 @@
 
             </div>
 
-            <div>Total value used {{getTotalValue()}}</div>
+            <div>Total value used {{getTotalValue()}} (out of {{getMaxValueToSpend()}})</div>
             <!-- <div>{{showAllPlayers()}}</div> -->
 
             <button class='btn btn-primary' ng-click='saveTeam()'>Save Team</button>

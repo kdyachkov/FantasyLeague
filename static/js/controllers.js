@@ -73,7 +73,7 @@ myApp.factory('Team', function(SharedService){
     Team.maxMidfielders = 2;
     Team.maxForwards = 1;
     Team.maxSubs = 2;
-    Team.maxValueToSpend = 50;
+    Team.maxValueToSpend = 0;
     Team.players = {};
 
 
@@ -87,6 +87,9 @@ myApp.factory('Team', function(SharedService){
             Team.midfielders = team.midfielders;
             Team.forwards = team.forwards;
             Team.subs = team.subs;
+            Team.maxValueToSpend = team.max_team_starting_value;
+
+            Team.allPlayers = Team.goalkeaper.concat(Team.defenders, Team.midfielders, Team.forwards, Team.subs)
             // this callback will be called asynchronously
             // when the response is available
         }).
@@ -299,6 +302,9 @@ function TeamCtrl($scope, Team){
     }
     $scope.getTotalValue = function(){
         return Team.getTotalValue()
+    }
+    $scope.getMaxValueToSpend = function(){
+        return Team.maxValueToSpend
     }
 
     $scope.saveTeam = function(){
