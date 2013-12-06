@@ -31,7 +31,7 @@ class Player(Document):
 
 class Team(EmbeddedDocument):
     name = StringField(required=True)
-    goalkeeper = ReferenceField(Player)
+    goalkeeper = ListField(ReferenceField(Player))
     defenders = ListField(ReferenceField(Player))
     midfielders = ListField(ReferenceField(Player))
     forwards = ListField(ReferenceField(Player, dbref=True))
@@ -41,5 +41,8 @@ class Team(EmbeddedDocument):
 
 
 class User(Document):
-    name = StringField(required=True)
+    name = StringField(required=True, unique=True)
     team = EmbeddedDocumentField(Team)
+    meta = {
+        'indexes': ['name']  # TODO: indexes don't work, not sure why
+    }

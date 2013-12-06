@@ -74,13 +74,28 @@ myApp.factory('Team', function(SharedService){
     Team.maxForwards = 1;
     Team.maxSubs = 2;
     Team.maxValueToSpend = 50;
+    Team.players = {};
 
-    Team.players = {}
-    Team.players['GK'] = Team.goalkeaper;
-    Team.players['D'] = Team.defenders;
-    Team.players['M'] = Team.midfielders;
-    Team.players['F'] = Team.forwards;
-    Team.players['S'] = Team.subs;
+
+    var url = '/get_team/';
+    // $http({method: 'GET', url: url}).
+    SharedService.makePOSTRequest(url).
+        success(function(data, status, headers, config) {
+            team = data['team']
+            Team.goalkeaper = team.goalkeeper;
+            Team.defenders = team.defenders;
+            Team.midfielders = team.midfielders;
+            Team.forwards = team.forwards;
+            Team.subs = team.subs;
+            // this callback will be called asynchronously
+            // when the response is available
+        }).
+        error(function(data, status, headers, config) {
+            // called asynchronously if an error occurs
+            // or server returns response with an error status.
+        });
+
+
 
 
     Team.addPlayer = function(player, position){
@@ -203,6 +218,11 @@ myApp.factory('Team', function(SharedService){
     }
 
     Team.saveTeam = function(){
+        Team.players['GK'] = Team.goalkeaper;
+        Team.players['D'] = Team.defenders;
+        Team.players['M'] = Team.midfielders;
+        Team.players['F'] = Team.forwards;
+        Team.players['S'] = Team.subs;
         console.log(Team.players)
         var team = JSON.stringify(Team.players)
         console.log(team)
