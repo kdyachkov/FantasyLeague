@@ -16,7 +16,7 @@ LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_L10N = True
-USE_TZ = True
+USE_TZ = False
 
 WSGI_APPLICATION = 'wsgi.application'
 
@@ -41,6 +41,7 @@ INSTALLED_APPS = (
     'fantasy_league',
 )
 
+
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -50,12 +51,13 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
-
 AUTHENTICATION_BACKENDS = (
-    'django.contrib.auth.backends.ModelBackend',
     'mongoengine.django.auth.MongoEngineBackend',
     'social_auth.backends.google.GoogleOAuth2Backend',
+    'social_auth.backends.facebook.FacebookBackend',
+    'django.contrib.auth.backends.ModelBackend',
 )
+
 
 TEMPLATE_CONTEXT_PROCESSORS = (
     'django.contrib.auth.context_processors.auth',
@@ -65,17 +67,24 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'social_auth.context_processors.social_auth_login_redirect',
 )
 SESSION_ENGINE = 'mongoengine.django.sessions'
-MONGOENGINE_USER_DOCUMENT = 'mongoengine.django.auth.User'
-SOCIAL_AUTH_MODELS = 'social_auth.db.mongoengine_models'
-#AUTH_USER_MODEL = 'mongo_auth.MongoUser'
 
+SOCIAL_AUTH_MODELS = 'social_auth.db.mongoengine_models'
+SOCIAL_AUTH_USER_MODEL = 'mongoengine.django.auth.User'
+AUTH_USER_MODEL = 'mongo_auth.MongoUser'
+
+#import mongoengine.django.sessions
+MONGOENGINE_SESSION_DATA_ENCODE = False
 LOGIN_URL          = '/login/'
-LOGIN_REDIRECT_URL = '/logged-in/'
+LOGIN_REDIRECT_URL = '/'
 LOGIN_ERROR_URL    = '/login-error/'
 
 
 GOOGLE_OAUTH2_CLIENT_ID      = os.environ['GOOGLE_OAUTH2_CLIENT_ID']
 GOOGLE_OAUTH2_CLIENT_SECRET  = os.environ['GOOGLE_OAUTH2_CLIENT_SECRET']
+
+FACEBOOK_APP_ID = os.environ['FACEBOOK_APP_ID']
+FACEBOOK_API_SECRET = os.environ['FACEBOOK_API_SECRET']
+FACEBOOK_AUTH_EXTRA_ARGUMENTS = {'display': 'touch'}
 
 ROOT_URLCONF = 'urls'
 TEMPLATE_DIRS = (os.path.join(BASE_DIR, 'fantasy_league', 'templates'),)
@@ -89,5 +98,5 @@ STATICFILES_FINDERS = (
     'compressor.finders.CompressorFinder'
 )
 
-MAX_TEAM_STARTING_VALUE = 50;
+MAX_TEAM_STARTING_VALUE = 50
 
