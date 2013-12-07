@@ -1,4 +1,5 @@
 from django.db import models
+from mongoengine.django.auth import User
 from mongoengine import *
 
 
@@ -46,3 +47,35 @@ class User(Document):
     meta = {
         'indexes': ['name']  # TODO: indexes don't work, not sure why
     }
+
+#class CustomUser(models.Model):
+#    username = models.CharField(unique=True, max_length=45, db_index=True)
+#    first_name = models.CharField(max_length=45)
+#    last_name = models.CharField(max_length=45)
+#    email = models.EmailField(unique=True)
+#    status = models.SmallIntegerField()
+#    activation_code = models.CharField(max_length=50, null=True, blank=True)
+#    is_active = models.BooleanField(default=False)
+#    is_staff = models.BooleanField(default=False)
+#    created_at = models.DateTimeField(auto_now_add=True, editable=False)
+#    updated_at = models.DateTimeField(auto_now=True)
+#    login_at = models.DateTimeField()
+#
+#    def __unicode__(self):
+#        return self.username
+#
+#    def get_fullname(self):
+#        return '%s %s' % (self.first_name, self.last_name)
+#
+#    def get_shortname(self):
+#        return self.first_name
+#
+#    def __meta__(self):
+#        return self.username
+#
+#    USERNAME_FIELD = 'username'
+#    REQUIRED_FIELDS = ['email']
+#
+#    class Meta:
+#        """Meta data"""
+#        unique_together = ('username', 'first_name')

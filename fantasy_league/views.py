@@ -1,4 +1,5 @@
 import json
+from django.contrib.auth import logout
 from django.shortcuts import render_to_response
 from django.template.context import RequestContext
 from django.http import HttpResponse
@@ -32,6 +33,11 @@ def index(request):
         'players': players
         })
     return render_to_response('index.html', context_instance=context)
+
+
+def logoff(request):
+    logout(request)
+    return render_to_response('index.html',  context_instance=RequestContext(request))
 
 
 def get_players(request):

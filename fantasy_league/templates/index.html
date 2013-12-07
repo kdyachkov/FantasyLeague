@@ -10,7 +10,8 @@
 {#        <a href="{% url 'socialauth_begin' 'google-oauth2' %}">Login with Google</a>#}
         <div class="navbar-right">
             {% if user.is_authenticated %}
-                <p>Welcome, {{ user.username }}. Thanks for logging in.</p>
+                <p>Welcome, {{ user.first_name }} {{ user.last_name }}!</p>
+                <a href="{% url 'logoff' %}">Logoff</a>
             {% else %}
                     <a href="{% url 'socialauth_begin' 'google-oauth2' %}" class='zocial googleplus navbar-btn'>Sign in with Google</a>
                     <a href="{% url 'socialauth_begin' 'facebook' %}" class='zocial facebook navbar-btn'>Sign in with Facebook</a>
@@ -18,13 +19,10 @@
         </div>
     </nav>
 
-
-{% verbatim %}
-
-
 	<div class='container'>
 		<div class="row">
-
+{#          {% if user.is_authenticated %}#}
+          {% verbatim %}
 		  <div class="col-md-6" ng-controller="TeamCtrl">
             <!-- <ul ng-repeat="player in showAllPlayers()">
                 <li>{{player.name}} - {{player.position}} - {{player.init_value}}</li>
@@ -93,6 +91,9 @@
 
             <button class='btn btn-primary' ng-click='saveTeam()'>Save Team</button>
 		  </div>
+		  {% endverbatim %}
+{#          {% endif %}#}
+            {% verbatim %}
 		  <div class="col-md-6" ng-controller="PlayersCtrl">
 	  		  <div class='container'>
                 <position position="ALL" ng-click="udatePlayersTable('ALL')"></position>
@@ -117,10 +118,11 @@
 			</div>
 		  </div>
 		</div>
+        {% endverbatim %}
 	</div>
 
 
-{% endverbatim %}
+
     
     
 </body>

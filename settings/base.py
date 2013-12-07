@@ -75,16 +75,29 @@ AUTH_USER_MODEL = 'mongo_auth.MongoUser'
 #import mongoengine.django.sessions
 MONGOENGINE_SESSION_DATA_ENCODE = False
 LOGIN_URL          = '/login/'
-LOGIN_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL = '/logged-in'
 LOGIN_ERROR_URL    = '/login-error/'
+SOCIAL_AUTH_NEW_USER_REDIRECT_URL = '/new-users-redirect-url/'
 
 
 GOOGLE_OAUTH2_CLIENT_ID      = os.environ['GOOGLE_OAUTH2_CLIENT_ID']
 GOOGLE_OAUTH2_CLIENT_SECRET  = os.environ['GOOGLE_OAUTH2_CLIENT_SECRET']
 
+#GOOGLE_OAUTH2_AUTH_EXTRA_ARGUMENTS = {'approval_prompt': 'force'}
+
 FACEBOOK_APP_ID = os.environ['FACEBOOK_APP_ID']
 FACEBOOK_API_SECRET = os.environ['FACEBOOK_API_SECRET']
 FACEBOOK_AUTH_EXTRA_ARGUMENTS = {'display': 'touch'}
+
+SOCIAL_AUTH_PIPELINE = (
+    'social_auth.backends.pipeline.social.social_auth_user',
+    #'social_auth.backends.pipeline.associate.associate_by_email',
+    #'social_auth.backends.pipeline.user.get_username',
+    'social_auth.backends.pipeline.user.create_user',
+    'social_auth.backends.pipeline.social.associate_user',
+    'social_auth.backends.pipeline.social.load_extra_data',
+    'social_auth.backends.pipeline.user.update_user_details'
+)
 
 ROOT_URLCONF = 'urls'
 TEMPLATE_DIRS = (os.path.join(BASE_DIR, 'fantasy_league', 'templates'),)
