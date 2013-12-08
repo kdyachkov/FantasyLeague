@@ -20,8 +20,7 @@ def convert_player_objs(player_objs):
     return all_players
 
 
-def generate_http_response(status, *args):
-    data = {name: val for name, val in args}
-    data['status'] = status
-    response = json.dumps(data)
+def generate_http_response(status, data_dict):
+    data_dict['status'] = status
+    response = json.dumps(data_dict)
     return HttpResponse(response, mimetype="application/json", status=status)

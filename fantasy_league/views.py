@@ -64,17 +64,24 @@ def get_team(request):
 
     team = user.team
     if not team:
-        return general.generate_http_response(500, ('message', 'No team exists, please create one first'), ('team_exists', False))
+        team_dict = {
+            'message': 'No team exists, please create one first',
+            'team_exists': False
+        }
+        return general.generate_http_response(500, team_dict)
+
+    team_dict = {
+        'team_name': team.name,
+        'team_exists': True,
+        'money_to_spend': float(team.money_to_spend)
+    }
 
     if not team.players.all():
-        return general.generate_http_response(200,
-                        ('message', 'team is empty'),
-                        ('team_exists', True),
-                        ('team_name', team.name),
-                        ('players', []),
-                        ('money_to_spend', float(team.money_to_spend))
-        )
-
+        team_dict.update({
+            'message': 'Team is empty',
+            'players': []
+        })
+        return general.generate_http_response(200, team_dict)
 
     all_players = general.convert_player_objs(team.players.all())
     goalkeeper = general.convert_player_objs(Player.objects.filter(membership__team=team, membership__position__position='GK'))
@@ -83,19 +90,17 @@ def get_team(request):
     forwards = general.convert_player_objs(Player.objects.filter(membership__team=team, membership__position__position='F'))
     subs = general.convert_player_objs(Player.objects.filter(membership__team=team, membership__position__position='S'))
 
-    team_dict = {
-        'team_exists': True,
-        'money_to_spend': float(team.money_to_spend),
+    team_dict.update({
         'players': all_players,
         'goalkeeper': goalkeeper,
         'defenders': defenders,
         'midfielders': midfielders,
         'forwards': forwards,
         'subs': subs,
-    }
-
-    response = json.dumps(team_dict)
-    return HttpResponse(response, mimetype='application/json')
+    })
+    
+    
+    return general.generate_http_response(200, team_dict)
 
 
 @csrf_exempt
