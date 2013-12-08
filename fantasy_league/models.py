@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.contrib import admin
 
 
 #class WeeklyPoints(models.Model):
@@ -23,6 +23,9 @@ from django.db import models
 class Position(models.Model):
     position = models.CharField(max_length=20, unique=True)
 
+    def __unicode__(self):
+        return self.position
+
 
 class Player(models.Model):
     name = models.CharField(max_length=50)
@@ -32,6 +35,9 @@ class Player(models.Model):
     current_value = models.DecimalField(max_digits=3, decimal_places=2)
     #weekly_points = models.ForeignKey(Week) # TODO: need to implement this
 
+    def __unicode__(self):
+        return self.name + " (" + self.primary_position.position + ")"
+
 
 class Team(models.Model):
     name = models.CharField(max_length=100,unique=True)
@@ -39,13 +45,16 @@ class Team(models.Model):
     captain = models.ForeignKey(Player, related_name='captain')
     team_points = models.DecimalField(max_digits=4, decimal_places=2)
 
+    def __unicode__(self):
+        return self.name
+
+
 class Membership(models.Model):
     player = models.ForeignKey(Player)
     position = models.ForeignKey(Position)
     team = models.ForeignKey(Team)
     amount_paid = models.DecimalField(max_digits=3, decimal_places=2)
     date_picked = models.DateField()
-
 
 
 class User(models.Model):
@@ -83,3 +92,10 @@ class User(models.Model):
 #    class Meta:
 #        """Meta data"""
 #        unique_together = ('username', 'first_name')
+
+admin.site.register(Position)
+admin.site.register(Player)
+admin.site.register(Team)
+admin.site.register(Membership)
+admin.site.register(User)
+

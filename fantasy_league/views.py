@@ -10,7 +10,8 @@ from libs import general
 
 
 def index(request):
-    return render_to_response('index.html')
+    context = RequestContext(request, {})
+    return render_to_response('index.html', context_instance=context)
 
 
 def logoff(request):

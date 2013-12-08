@@ -13,8 +13,8 @@
                 <p>Welcome, {{ user.first_name }} {{ user.last_name }}!</p>
                 <a href="{% url 'logoff' %}">Logoff</a>
             {% else %}
-                    <a href="{% url 'socialauth_begin' 'google-oauth2' %}" class='zocial googleplus navbar-btn'>Sign in with Google</a>
-                    <a href="{% url 'socialauth_begin' 'facebook' %}" class='zocial facebook navbar-btn'>Sign in with Facebook</a>
+                    <a href="{% url 'social:begin' 'google-oauth2' %}" class='zocial googleplus navbar-btn'>Sign in with Google</a>
+                    <a href="{% url 'social:begin' 'facebook' %}" class='zocial facebook navbar-btn'>Sign in with Facebook</a>
             {% endif %}
         </div>
     </nav>

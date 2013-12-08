@@ -38,7 +38,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.admin',
     'south',
-    #'social_auth',
+    'social.apps.django_app.default',
     'fantasy_league',
 )
 
@@ -53,44 +53,44 @@ MIDDLEWARE_CLASSES = (
 )
 
 AUTHENTICATION_BACKENDS = (
-    'social_auth.backends.google.GoogleOAuth2Backend',
-    'social_auth.backends.facebook.FacebookBackend',
+    'social.backends.google.GoogleOAuth2',
+    'social.backends.facebook.FacebookOAuth2',
     'django.contrib.auth.backends.ModelBackend',
 )
 
 
 TEMPLATE_CONTEXT_PROCESSORS = (
     'django.contrib.auth.context_processors.auth',
-    'social_auth.context_processors.social_auth_by_name_backends',
-    'social_auth.context_processors.social_auth_backends',
-    'social_auth.context_processors.social_auth_by_type_backends',
-    'social_auth.context_processors.social_auth_login_redirect',
+    'social.apps.django_app.context_processors.backends',
+    'social.apps.django_app.context_processors.login_redirect',
 )
 
-LOGIN_URL          = '/login/'
-LOGIN_REDIRECT_URL = '/logged-in'
-LOGIN_ERROR_URL    = '/login-error/'
+SOCIAL_AUTH_LOGIN_URL          = '/login/'
+SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/'
+SOCIAL_AUTH_LOGIN_ERROR_URL    = '/login-error/'
 #SOCIAL_AUTH_NEW_USER_REDIRECT_URL = '/new-users-redirect-url/'
 
 
-GOOGLE_OAUTH2_CLIENT_ID      = os.environ['GOOGLE_OAUTH2_CLIENT_ID']
-GOOGLE_OAUTH2_CLIENT_SECRET  = os.environ['GOOGLE_OAUTH2_CLIENT_SECRET']
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY      = os.environ['GOOGLE_OAUTH2_CLIENT_ID']
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET  = os.environ['GOOGLE_OAUTH2_CLIENT_SECRET']
 
 #GOOGLE_OAUTH2_AUTH_EXTRA_ARGUMENTS = {'approval_prompt': 'force'}
 
-FACEBOOK_APP_ID = os.environ['FACEBOOK_APP_ID']
-FACEBOOK_API_SECRET = os.environ['FACEBOOK_API_SECRET']
-FACEBOOK_AUTH_EXTRA_ARGUMENTS = {'display': 'touch'}
+SOCIAL_AUTH_FACEBOOK_KEY = os.environ['FACEBOOK_APP_ID']
+SOCIAL_AUTH_FACEBOOK_SECRET = os.environ['FACEBOOK_API_SECRET']
+SOCIAL_AUTH_FACEBOOK_AUTH_EXTRA_ARGUMENTS = {'display': 'touch'}
 
-#SOCIAL_AUTH_PIPELINE = (
-#    'social_auth.backends.pipeline.social.social_auth_user',
-#    #'social_auth.backends.pipeline.associate.associate_by_email',
-#    #'social_auth.backends.pipeline.user.get_username',
-#    'social_auth.backends.pipeline.user.create_user',
-#    'social_auth.backends.pipeline.social.associate_user',
-#    'social_auth.backends.pipeline.social.load_extra_data',
-#    'social_auth.backends.pipeline.user.update_user_details'
-#)
+SOCIAL_AUTH_PIPELINE = (
+    'social.pipeline.social_auth.social_details',
+    'social.pipeline.social_auth.social_uid',
+    'social.pipeline.social_auth.auth_allowed',
+    'social.pipeline.social_auth.social_user',
+    'social.pipeline.user.get_username',
+    'social.pipeline.user.create_user',
+    'social.pipeline.social_auth.associate_user',
+    'social.pipeline.social_auth.load_extra_data',
+    'social.pipeline.user.user_details'
+)
 
 ROOT_URLCONF = 'urls'
 TEMPLATE_DIRS = (os.path.join(BASE_DIR, 'fantasy_league', 'templates'),)

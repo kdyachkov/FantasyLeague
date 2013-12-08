@@ -13,7 +13,6 @@ admin.autodiscover()
 urlpatterns = patterns('',
                        (r'^admin/', include(admin.site.urls)),
                        (r'^', include('fantasy_league.urls')),
-                       url(r'', include('social_auth.urls')),
                        url('', include('social.apps.django_app.urls', namespace='social'))
                        )
 
