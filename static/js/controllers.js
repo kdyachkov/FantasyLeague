@@ -62,6 +62,7 @@ myApp.factory('Players', function(SharedService){
 
 myApp.factory('Team', function(SharedService){
     var Team = {};
+    Team.exists = false;
     Team.name = '';
     Team.goalkeaper = [];
     Team.defenders = [];
@@ -79,33 +80,42 @@ myApp.factory('Team', function(SharedService){
     Team.players = {};
 
 
-
-    Team.getTeam = function(){
+    Team.loadTeam = function(){
         var url = '/get_team/';
         // $http({method: 'GET', url: url}).
         SharedService.makePOSTRequest(url, {team_name:Team.name}).
         success(function(data, status, headers, config) {
-            team = data['team']
-            Team.goalkeaper = team.goalkeeper;
-            Team.defenders = team.defenders;
-            Team.midfielders = team.midfielders;
-            Team.forwards = team.forwards;
-            Team.subs = team.subs;
-            Team.maxValueToSpend = team.max_team_starting_value;
+            Team.name = data.team_name;
+            Team.exists = data.team_exists;
+            Team.maxValueToSpend = data.money_to_spend;
+            Team.allPlayers = data.players;
+            if (Team.allPlayers.length > 0){
+                Team.goalkeaper = team.goalkeeper;
+                Team.defenders = team.defenders;
+                Team.midfielders = team.midfielders;
+                Team.forwards = team.forwards;
+                Team.subs = team.subs;
 
-            Team.allPlayers = Team.goalkeaper.concat(Team.defenders, Team.midfielders, Team.forwards, Team.subs)
+
+            }
+            else{
+                console.log("NO players found")
+            }
+//            Team.allPlayers = Team.goalkeaper.concat(Team.defenders, Team.midfielders, Team.forwards, Team.subs);
+
+
             // this callback will be called asynchronously
             // when the response is available
         }).
         error(function(data, status, headers, config) {
-            // called asynchronously if an error occurs
-            // or server returns response with an error status.
+            console.log(data);
+//            alert(data.message)
         });
     }
 
-
-
-
+    Team.doesTeamExist = function(){
+        return Team.exists
+    }
 
     Team.addPlayer = function(player, position){
         if (Team.allPlayers.length >= Team.maxPlayers){
@@ -252,10 +262,11 @@ myApp.factory('Team', function(SharedService){
         SharedService.makePOSTRequest(url, {team_name: Team.name}).
             success(function(data, status, headers, config){
                 console.log(data)
+                Team.exists = true;
             }).
             error(function(data, status, headers, config) {
-            // called asynchronously if an error occurs
-            // or server returns response with an error status.
+                console.log(data)
+                alert(data.message)
         });
 
 
@@ -288,7 +299,11 @@ function PlayersCtrl($scope, $rootScope, Players, Team){
 
 function TeamCtrl($scope, Team){
 
-    $scope.name = ''
+    $scope.name = '';
+
+    $scope.getTeamName = function(){
+        return Team.name
+    }
 
     $scope.showAllPlayers = function(){
         console.log(Team.allPlayers)
@@ -337,4 +352,12 @@ function TeamCtrl($scope, Team){
     $scope.createTeam = function(){
         Team.createTeam($scope.name);
     }
-} 
+
+    $scope.loadTeam = function(){
+        Team.loadTeam()
+    }
+
+    $scope.doesTeamExist = function(){
+        return Team.doesTeamExist();
+    }
+}

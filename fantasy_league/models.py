@@ -44,9 +44,9 @@ class Player(models.Model):
 class Team(models.Model):
     name = models.CharField(max_length=100,unique=True)
     players = models.ManyToManyField(Player, through="Membership", related_name='players')
-    captain = models.ForeignKey(Player, related_name='captain')
-    team_points = models.DecimalField(max_digits=6, decimal_places=2)
-    money_to_spend = models.DecimalField(max_digits=6, decimal_places=2)
+    captain = models.ForeignKey(Player, related_name='captain', null=True)
+    team_points = models.DecimalField(max_digits=6, decimal_places=2, null=True)
+    money_to_spend = models.DecimalField(max_digits=6, decimal_places=2, null=True)
 
     def __unicode__(self):
         return self.name
