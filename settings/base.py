@@ -65,6 +65,8 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'social.apps.django_app.context_processors.login_redirect',
 )
 
+AUTH_USER_MODEL = 'fantasy_league.User'
+
 SOCIAL_AUTH_LOGIN_URL          = '/login/'
 SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/'
 SOCIAL_AUTH_LOGIN_ERROR_URL    = '/login-error/'

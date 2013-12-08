@@ -7,7 +7,6 @@
 
 
     <nav class="navbar navbar-default" role="navigation">
-{#        <a href="{% url 'socialauth_begin' 'google-oauth2' %}">Login with Google</a>#}
         <div class="navbar-right">
             {% if user.is_authenticated %}
                 <p>Welcome, {{ user.first_name }} {{ user.last_name }}!</p>
@@ -18,11 +17,12 @@
             {% endif %}
         </div>
     </nav>
-
+    {% if user.is_authenticated %}
+    {% verbatim %}
 	<div class='container'>
 		<div class="row">
-{#          {% if user.is_authenticated %}#}
-          {% verbatim %}
+
+
 		  <div class="col-md-6" ng-controller="TeamCtrl">
             <!-- <ul ng-repeat="player in showAllPlayers()">
                 <li>{{player.name}} - {{player.position}} - {{player.init_value}}</li>
@@ -91,10 +91,8 @@
 
             <button class='btn btn-primary' ng-click='saveTeam()'>Save Team</button>
 		  </div>
-		  {% endverbatim %}
-{#          {% endif %}#}
-            {% verbatim %}
-		  <div class="col-md-6" ng-controller="PlayersCtrl">
+
+          <div class="col-md-6" ng-controller="PlayersCtrl">
 	  		  <div class='container'>
                 <position position="ALL" ng-click="udatePlayersTable('ALL')"></position>
                 <position position="GK" ng-click="udatePlayersTable('GK')"></position>
@@ -118,9 +116,9 @@
 			</div>
 		  </div>
 		</div>
-        {% endverbatim %}
 	</div>
-
+   {% endverbatim %}
+   {% endif %}
 
 
     

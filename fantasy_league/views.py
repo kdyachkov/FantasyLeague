@@ -19,7 +19,7 @@ def logoff(request):
     return render_to_response('index.html',  context_instance=RequestContext(request))
 
 def login_error(request):
-    print "ERROR"
+    #error = get_message(request, exception)
     return render_to_response('index.html', context_instance=RequestContext(request))
 
 
@@ -46,11 +46,27 @@ def get_players(request):
     response = json.dumps({'players': all_players})
     return HttpResponse(response, mimetype='application/json')
 
+
+@csrf_exempt
+def create_team(request):
+    user = request.user
+    if not user.is_active:
+        return HttpResponse(status=401)
+
+    team_name = request.POST.get('team_name')
+    #user_name =
+
+
 @csrf_exempt
 def get_team(request):
     #team_name = request.POST.get('team_name')
     #if not team_name:
     #    return HttpResponse(status=500)  # TODO: return correct error
+
+    user = request.user
+    if not user.is_active:
+        return HttpResponse(status=401)
+
 
     username = 'kdyachkov'
     user_objs = User.objects(name=username)
