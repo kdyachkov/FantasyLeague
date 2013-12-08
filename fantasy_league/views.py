@@ -7,7 +7,7 @@ from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
 from datetime import datetime
-from models import Player, Team, Membership
+from models import Player, Team, Membership, Position
 from libs import general
 
 
@@ -75,22 +75,26 @@ def get_team(request):
                         ('money_to_spend', float(team.money_to_spend))
         )
 
-    goalkeeper = general.convert_player_objs(team.goalkeeper)
-    defenders = general.convert_player_objs(team.defenders)
-    midfielders = general.convert_player_objs(team.midfielders)
-    forwards = general.convert_player_objs(team.forwards)
-    subs = general.convert_player_objs(team.subs)
+
+    all_players = general.convert_player_objs(team.players.all())
+    goalkeeper = general.convert_player_objs(Player.objects.filter(membership__team=team, membership__position__position='GK'))
+    defenders = general.convert_player_objs(Player.objects.filter(membership__team=team, membership__position__position='D'))
+    midfielders = general.convert_player_objs(Player.objects.filter(membership__team=team, membership__position__position='M'))
+    forwards = general.convert_player_objs(Player.objects.filter(membership__team=team, membership__position__position='F'))
+    subs = general.convert_player_objs(Player.objects.filter(membership__team=team, membership__position__position='S'))
 
     team_dict = {
+        'team_exists': True,
+        'money_to_spend': float(team.money_to_spend),
+        'players': all_players,
         'goalkeeper': goalkeeper,
         'defenders': defenders,
         'midfielders': midfielders,
         'forwards': forwards,
         'subs': subs,
-        'max_team_starting_value': settings.MAX_TEAM_STARTING_VALUE
     }
 
-    response = json.dumps({'team': team_dict})
+    response = json.dumps(team_dict)
     return HttpResponse(response, mimetype='application/json')
 
 

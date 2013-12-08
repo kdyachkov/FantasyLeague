@@ -90,11 +90,11 @@ myApp.factory('Team', function(SharedService){
             Team.maxValueToSpend = data.money_to_spend;
             Team.allPlayers = data.players;
             if (Team.allPlayers.length > 0){
-                Team.goalkeaper = team.goalkeeper;
-                Team.defenders = team.defenders;
-                Team.midfielders = team.midfielders;
-                Team.forwards = team.forwards;
-                Team.subs = team.subs;
+                Team.goalkeaper = data.goalkeeper;
+                Team.defenders = data.defenders;
+                Team.midfielders = data.midfielders;
+                Team.forwards = data.forwards;
+                Team.subs = data.subs;
 
 
             }
