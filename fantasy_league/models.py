@@ -1,3 +1,4 @@
+from decimal import Decimal
 from django.db import models
 from django.contrib import admin
 from django.contrib.auth.models import AbstractBaseUser, UserManager, PermissionsMixin, Group
@@ -32,8 +33,8 @@ class Player(models.Model):
     name = models.CharField(max_length=50)
     positions = models.ManyToManyField(Position, related_name='positions')
     primary_position = models.ForeignKey(Position, related_name='primary_position')
-    init_value = models.DecimalField(max_digits=3, decimal_places=2)
-    current_value = models.DecimalField(max_digits=3, decimal_places=2)
+    init_value = models.DecimalField(max_digits=4, decimal_places=2)
+    current_value = models.DecimalField(max_digits=4, decimal_places=2)
     #weekly_points = models.ForeignKey(Week) # TODO: need to implement this
 
     def __unicode__(self):
@@ -44,7 +45,8 @@ class Team(models.Model):
     name = models.CharField(max_length=100,unique=True)
     players = models.ManyToManyField(Player, through="Membership", related_name='players')
     captain = models.ForeignKey(Player, related_name='captain')
-    team_points = models.DecimalField(max_digits=4, decimal_places=2)
+    team_points = models.DecimalField(max_digits=6, decimal_places=2)
+    money_to_spend = models.DecimalField(max_digits=6, decimal_places=2)
 
     def __unicode__(self):
         return self.name
@@ -54,7 +56,7 @@ class Membership(models.Model):
     player = models.ForeignKey(Player)
     position = models.ForeignKey(Position)
     team = models.ForeignKey(Team)
-    amount_paid = models.DecimalField(max_digits=3, decimal_places=2)
+    amount_paid = models.DecimalField(max_digits=4, decimal_places=2)
     date_picked = models.DateField()
 
 

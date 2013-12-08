@@ -4,15 +4,15 @@ def convert_player_objs(player_objs):
     if not player_objs:
         return []
 
-    players = []
-    for player in player_objs:
-        d = {
-            'id': str(player.id),
-            'name': player.name,
-            'init_value': str(player.init_value),
-            'position': player.position,
-            'primary_position': player.position[0]
+    all_players = []
+    for player_obj in player_objs:
+        player = {
+            'name': player_obj.name,
+            'positions': [pos.position for pos in player_obj.positions.all()],
+            'primary_position': player_obj.primary_position.position,
+            'init_value': float(player_obj.init_value),
+            'current_value': float(player_obj.current_value),
         }
-        players.append(d)
+        all_players.append(player)
 
-    return players
+    return all_players

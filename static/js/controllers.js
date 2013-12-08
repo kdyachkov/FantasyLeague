@@ -62,6 +62,7 @@ myApp.factory('Players', function(SharedService){
 
 myApp.factory('Team', function(SharedService){
     var Team = {};
+    Team.name = '';
     Team.goalkeaper = [];
     Team.defenders = [];
     Team.midfielders = [];
@@ -78,9 +79,11 @@ myApp.factory('Team', function(SharedService){
     Team.players = {};
 
 
-    var url = '/get_team/';
-    // $http({method: 'GET', url: url}).
-    SharedService.makePOSTRequest(url).
+
+    Team.getTeam = function(){
+        var url = '/get_team/';
+        // $http({method: 'GET', url: url}).
+        SharedService.makePOSTRequest(url, {team_name:Team.name}).
         success(function(data, status, headers, config) {
             team = data['team']
             Team.goalkeaper = team.goalkeeper;
@@ -98,6 +101,8 @@ myApp.factory('Team', function(SharedService){
             // called asynchronously if an error occurs
             // or server returns response with an error status.
         });
+    }
+
 
 
 
@@ -239,6 +244,21 @@ myApp.factory('Team', function(SharedService){
             // called asynchronously if an error occurs
             // or server returns response with an error status.
         });
+    };
+
+    Team.createTeam = function(team_name){
+        Team.name = team_name
+        var url = '/create_team/'
+        SharedService.makePOSTRequest(url, {team_name: Team.name}).
+            success(function(data, status, headers, config){
+                console.log(data)
+            }).
+            error(function(data, status, headers, config) {
+            // called asynchronously if an error occurs
+            // or server returns response with an error status.
+        });
+
+
     }
 
     return Team
@@ -267,7 +287,9 @@ function PlayersCtrl($scope, $rootScope, Players, Team){
 }
 
 function TeamCtrl($scope, Team){
-    
+
+    $scope.name = ''
+
     $scope.showAllPlayers = function(){
         console.log(Team.allPlayers)
         return Team.allPlayers;
@@ -310,5 +332,9 @@ function TeamCtrl($scope, Team){
 
     $scope.saveTeam = function(){
         Team.saveTeam()
+    }
+
+    $scope.createTeam = function(){
+        Team.createTeam($scope.name);
     }
 } 

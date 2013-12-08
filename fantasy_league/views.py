@@ -24,24 +24,7 @@ def login_error(request):
 
 
 def get_players(request):
-    all_players = []
-    for player_obj in  Player.objects.all():
-        player = {
-            'name': player_obj.name,
-            'positions': [pos.position for pos in player_obj.positions.all()],
-            'primary_position': player_obj.primary_position.position,
-            'init_value': float(player_obj.init_value),
-            'current_value': float(player_obj.current_value),
-        }
-        all_players.append(player)
-
-    print len(all_players)
-
-
-    #players = [(p.name, p.position, p.init_value) for p in players]
-    #context = RequestContext(request, {
-    #    'players': all_players
-    #    })
+    all_players = general.convert_player_objs(Player.objects.all())
 
     response = json.dumps({'players': all_players})
     return HttpResponse(response, mimetype='application/json')
@@ -54,15 +37,14 @@ def create_team(request):
         return HttpResponse(status=401)
 
     team_name = request.POST.get('team_name')
+    team = Team()
+    team.name = team_name
+
     #user_name =
 
 
 @csrf_exempt
 def get_team(request):
-    #team_name = request.POST.get('team_name')
-    #if not team_name:
-    #    return HttpResponse(status=500)  # TODO: return correct error
-
     user = request.user
     if not user.is_active:
         return HttpResponse(status=401)
