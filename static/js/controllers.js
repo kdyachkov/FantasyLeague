@@ -32,6 +32,7 @@ myApp.factory('Players', function(SharedService){
     SharedService.makeGETRequest(url).
         success(function(data, status, headers, config) {
             Players.players = data['players']
+            console.log(Players.players)
             Players.goalkeapers = _.filter(Players.players, function(player){ return player.primary_position == 'GK'})
             Players.defenders = _.filter(Players.players, function(player){ return player.primary_position == 'D'})
             Players.midfielders = _.filter(Players.players, function(player){ return player.primary_position == 'M'})

@@ -1,52 +1,56 @@
 from django.db import models
-from mongoengine.django.auth import User
-from mongoengine import *
 
 
 
-class WeeklyPoints(EmbeddedDocument):
-    #player = ReferenceField(Player)
-    week_number = IntField()
-    points_total = DecimalField()
-    clean_sheet = IntField()
-    saves = IntField()
-    penalty_save_regulation = IntField()
-    penalty_save_tiebreaker = IntField()
-    goals_conceded = IntField()
-    goal_regulation = IntField()
-    goal_tiebreaker = IntField()
-    assist = IntField()
-    penalty_miss = IntField()
-    yellow_card = IntField()
-    red_card = IntField()
-    own_goal = IntField()
+#class WeeklyPoints(models.Model):
+#    #player = ReferenceField(Player)
+#    week_number = IntField()
+#    points_total = DecimalField()
+#    clean_sheet = IntField()
+#    saves = IntField()
+#    penalty_save_regulation = IntField()
+#    penalty_save_tiebreaker = IntField()
+#    goals_conceded = IntField()
+#    goal_regulation = IntField()
+#    goal_tiebreaker = IntField()
+#    assist = IntField()
+#    penalty_miss = IntField()
+#    yellow_card = IntField()
+#    red_card = IntField()
+#    own_goal = IntField()
 
 
-class Player(Document):
-    name = StringField(required=True)
-    position = ListField(StringField(max_length=30))
-    init_value = DecimalField()
-    current_value = DecimalField()
-    weekly_points = ListField(EmbeddedDocumentField(WeeklyPoints))
+class Position(models.Model):
+    position = models.CharField(max_length=20, unique=True)
 
 
-class Team(EmbeddedDocument):
-    name = StringField(required=True)
-    goalkeeper = ListField(ReferenceField(Player))
-    defenders = ListField(ReferenceField(Player))
-    midfielders = ListField(ReferenceField(Player))
-    forwards = ListField(ReferenceField(Player, dbref=True))
-    subs = ListField(ReferenceField(Player))
-    captain = ReferenceField(Player)
-    team_points = DecimalField()
+class Player(models.Model):
+    name = models.CharField(max_length=50)
+    positions = models.ManyToManyField(Position, related_name='positions')
+    primary_position = models.ForeignKey(Position, related_name='primary_position')
+    init_value = models.DecimalField(max_digits=3, decimal_places=2)
+    current_value = models.DecimalField(max_digits=3, decimal_places=2)
+    #weekly_points = models.ForeignKey(Week) # TODO: need to implement this
 
 
-class User(Document):
-    name = StringField(required=True, unique=True)
-    team = EmbeddedDocumentField(Team)
-    meta = {
-        'indexes': ['name']  # TODO: indexes don't work, not sure why
-    }
+class Team(models.Model):
+    name = models.CharField(max_length=100,unique=True)
+    players = models.ManyToManyField(Player, through="Membership", related_name='players')
+    captain = models.ForeignKey(Player, related_name='captain')
+    team_points = models.DecimalField(max_digits=4, decimal_places=2)
+
+class Membership(models.Model):
+    player = models.ForeignKey(Player)
+    position = models.ForeignKey(Position)
+    team = models.ForeignKey(Team)
+    amount_paid = models.DecimalField(max_digits=3, decimal_places=2)
+    date_picked = models.DateField()
+
+
+
+class User(models.Model):
+    name = models.CharField(max_length=50)
+    team = models.ForeignKey(Team)
 
 #class CustomUser(models.Model):
 #    username = models.CharField(unique=True, max_length=45, db_index=True)

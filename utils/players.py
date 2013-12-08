@@ -1,10 +1,8 @@
+import json
+from collections import OrderedDict
+POSITIONS = OrderedDict([('GK', 1), ('D', 2), ('M', 3), ('F', 4), ('S', 5)])
 
-# players = [
-#     {'name': 'Kostya', 'position':'M', 'value': 5.5},
-
-# ]*\
-
-players = "Alex K., GK, 6*\
+PLAYERS = "Alex K., GK, 6*\
 Aaron(Yamin), GK, 5.5*\
 Ilya K., GK, 6*\
 Vova, GK, 5.5*\
@@ -47,13 +45,41 @@ Malcavich, F, 8.5*\
 Efe, F, 9"
 
 
-def get_players_dict():
-    player_list = []
-    for player in players.split('*'):
-        name, position, value = player.split(',')
-        player_list.append({'name': name, 'position': [pos.strip() for pos in position.split('|')], 'init_value': value})
 
-    # print player_list
-    return player_list
+def generate_init_data():
+    data = []
+    model = 'fantasy_league.position'
+    for pos, pk in POSITIONS.items():
+        fields = {
+            'position': pos,
+        }
+        position = {
+            'model': model,
+            'pk': pk,
+            'fields': fields
+        }
+        data.append(position)
 
-get_players_dict()
+    model = "fantasy_league.player"
+    for player in sorted(PLAYERS.split("*")):
+        name, position, init_value = player.split(",")
+        positions = [POSITIONS[pos.strip()] for pos in position.split("|")]
+        primary_position = positions[0]
+        current_value = init_value
+        fields = {
+            "name": name,
+            "positions": positions,
+            "primary_position": primary_position,
+            "init_value": init_value,
+            "current_value": current_value
+        }
+        player = {
+            "model": model,
+            "fields": fields
+        }
+        data.append(player)
+
+
+    print json.dumps(data, indent=4, sort_keys=True)
+
+generate_init_data()

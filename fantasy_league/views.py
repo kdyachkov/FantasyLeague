@@ -5,47 +5,44 @@ from django.template.context import RequestContext
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
-from models import Player, WeeklyPoints, Team, User
+from models import Player, Team, User
 from libs import general
 
 
 def index(request):
-
-    #w1 = WeeklyPoints(week_number=1, goal_regulation=1, assists=1)
-    #p1 = Player(name='Alex', init_value = 5.5, points = 0, weekly_points=[w1])
-    #print p1
-    #p1.save()
-    #karasik = Player.objects(name='Alex K.')[0]
-    #print karasik
-    #team = Team(name='Kostya FC', goalkeaper=karasik, forwards=[karasik])
-    #print team.name, team.goalkeaper
-    #user = User(name='Kostya Dyachkov', team = team)
-    #user.save()
-
-    #players = Player.objects(name='Alex K.')
-    players = Player.objects.all()
-    #for p in Player.objects.all():
-    #    print p.name, p.weekly_points[0].goal_regulation
-    players = [(p.name, p.position, p.init_value) for p in players]
-    #for p in players:
-    #    print p.name, p.init_value
-    context = RequestContext(request, {
-        'players': players
-        })
-    return render_to_response('index.html', context_instance=context)
+    return render_to_response('index.html')
 
 
 def logoff(request):
     logout(request)
     return render_to_response('index.html',  context_instance=RequestContext(request))
 
+def login_error(request):
+    print "ERROR"
+    return render_to_response('index.html', context_instance=RequestContext(request))
+
 
 def get_players(request):
-    players_objs = Player.objects.all()
+    all_players = []
+    for player_obj in  Player.objects.all():
+        player = {
+            'name': player_obj.name,
+            'positions': [pos.position for pos in player_obj.positions.all()],
+            'primary_position': player_obj.primary_position.position,
+            'init_value': float(player_obj.init_value),
+            'current_value': float(player_obj.current_value),
+        }
+        all_players.append(player)
 
-    players = general.convert_player_objs(players_objs)
+    print len(all_players)
 
-    response = json.dumps({'players': players})
+
+    #players = [(p.name, p.position, p.init_value) for p in players]
+    #context = RequestContext(request, {
+    #    'players': all_players
+    #    })
+
+    response = json.dumps({'players': all_players})
     return HttpResponse(response, mimetype='application/json')
 
 @csrf_exempt
