@@ -88,7 +88,7 @@ myApp.factory('Team', function(SharedService){
             Team.name = data.team_name;
             Team.exists = data.team_exists;
             Team.maxValueToSpend = data.money_to_spend;
-            Team.allPlayers = data.players;
+                Team.allPlayers = data.players;
             if (Team.allPlayers.length > 0){
                 Team.goalkeaper = data.goalkeeper;
                 Team.defenders = data.defenders;
@@ -262,7 +262,7 @@ myApp.factory('Team', function(SharedService){
         SharedService.makePOSTRequest(url, {team_name: Team.name}).
             success(function(data, status, headers, config){
                 console.log(data)
-                Team.exists = true;
+                Team.loadTeam();
             }).
             error(function(data, status, headers, config) {
                 console.log(data)

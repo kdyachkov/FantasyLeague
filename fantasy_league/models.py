@@ -4,22 +4,24 @@ from django.contrib import admin
 from django.contrib.auth.models import AbstractBaseUser, UserManager, PermissionsMixin, Group
 from django.utils.http import urlquote
 from django.utils import timezone
-#class WeeklyPoints(models.Model):
-#    #player = ReferenceField(Player)
-#    week_number = IntField()
-#    points_total = DecimalField()
-#    clean_sheet = IntField()
-#    saves = IntField()
-#    penalty_save_regulation = IntField()
-#    penalty_save_tiebreaker = IntField()
-#    goals_conceded = IntField()
-#    goal_regulation = IntField()
-#    goal_tiebreaker = IntField()
-#    assist = IntField()
-#    penalty_miss = IntField()
-#    yellow_card = IntField()
-#    red_card = IntField()
-#    own_goal = IntField()
+
+class WeeklyPoints(models.Model):
+    player = models.ForeignKey('Player')
+    position = models.ForeignKey('Position')
+    week_number = models.IntegerField(default=0)
+    points_total = models.IntegerField(default=0)
+    clean_sheet = models.IntegerField(default=0)
+    saves = models.IntegerField(default=0)
+    penalty_save_regulation = models.IntegerField(default=0)
+    penalty_save_tiebreaker = models.IntegerField(default=0)
+    goals_conceded = models.IntegerField(default=0)
+    goal_regulation = models.IntegerField(default=0)
+    goal_tiebreaker = models.IntegerField(default=0)
+    assist = models.IntegerField(default=0)
+    penalty_miss = models.IntegerField(default=0)
+    yellow_card = models.IntegerField(default=0)
+    red_card = models.IntegerField(default=0)
+    own_goal = models.IntegerField(default=0)
 
 
 class Position(models.Model):
@@ -35,7 +37,7 @@ class Player(models.Model):
     primary_position = models.ForeignKey(Position, related_name='primary_position')
     init_value = models.DecimalField(max_digits=4, decimal_places=2)
     current_value = models.DecimalField(max_digits=4, decimal_places=2)
-    #weekly_points = models.ForeignKey(Week) # TODO: need to implement this
+    weekly_points = models.ManyToManyField(WeeklyPoints, related_name='points')
 
     def __unicode__(self):
         return self.name + " (" + self.primary_position.position + ")"
@@ -58,11 +60,6 @@ class Membership(models.Model):
     team = models.ForeignKey(Team)
     amount_paid = models.DecimalField(max_digits=4, decimal_places=2)
     date_picked = models.DateField()
-
-
-#class FantasyLeagueUser(models.Model):
-#    user = models.ForeignKey(User)
-#    team = models.ForeignKey(Team)
 
 
 class CustomUserManager(UserManager):
