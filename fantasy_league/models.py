@@ -1,6 +1,7 @@
 from decimal import Decimal
 from django.db import models
 from django.contrib import admin
+from django.contrib.admin import actions
 from django.contrib.auth.models import AbstractBaseUser, UserManager, PermissionsMixin, Group
 from django.utils.http import urlquote
 from django.utils import timezone
@@ -113,12 +114,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     first_name = models.CharField(max_length=30, blank=True)
     last_name = models.CharField(max_length=30, blank=True)
     email = models.EmailField(blank=True)
-    is_staff = models.BooleanField(('staff status'), default=False,
-        help_text=('Designates whether the user can log into this admin '
-                    'site.'))
-    is_active = models.BooleanField(('active'), default=True,
-        help_text=('Designates whether this user should be treated as '
-                    'active. Unselect this instead of deleting accounts.'))
+    is_staff = models.BooleanField(('staff status'), default=False)#, help_text=('Designates whether the user can log into this admin ''site.'))
+    is_active = models.BooleanField(('active'), default=True)#, help_text=('Designates whether this user should be treated as ''active. Unselect this instead of deleting accounts.'))
     date_joined = models.DateTimeField(('date joined'), default=timezone.now)
 
     team = models.ForeignKey(Team, null=True, blank=True, default=None)
@@ -148,6 +145,8 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 admin.site.register(Position)
 admin.site.register(Player)
+admin.site.register(Week)
+admin.site.register(Game)
 admin.site.register(Team)
 admin.site.register(Membership)
 admin.site.register(User)

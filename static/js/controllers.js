@@ -62,23 +62,27 @@ myApp.factory('Players', function(SharedService){
 
 myApp.factory('Team', function(SharedService){
     var Team = {};
-    Team.exists = false;
-    Team.name = '';
-    Team.goalkeaper = [];
-    Team.defenders = [];
-    Team.midfielders = [];
-    Team.forwards = [];
-    Team.subs = [];
-    Team.allPlayers = []
-    Team.maxPlayers = 8;
-    Team.maxGoalkeepers = 1;
-    Team.maxDefenders = 2;
-    Team.maxMidfielders = 2;
-    Team.maxForwards = 1;
-    Team.maxSubs = 2;
-    Team.maxValueToSpend = 0;
-    Team.players = {};
 
+    Team.init = function(){
+        Team.exists = false;
+        Team.name = '';
+        Team.goalkeaper = [];
+        Team.defenders = [];
+        Team.midfielders = [];
+        Team.forwards = [];
+        Team.subs = [];
+        Team.allPlayers = []
+        Team.maxPlayers = 8;
+        Team.maxGoalkeepers = 1;
+        Team.maxDefenders = 2;
+        Team.maxMidfielders = 2;
+        Team.maxForwards = 1;
+        Team.maxSubs = 2;
+        Team.maxValueToSpend = 0;
+        Team.players = {};
+    }
+
+    Team.init();
 
     Team.loadTeam = function(){
         var url = '/get_team/';
@@ -87,20 +91,23 @@ myApp.factory('Team', function(SharedService){
         success(function(data, status, headers, config) {
             Team.name = data.team_name;
             Team.exists = data.team_exists;
-            Team.maxValueToSpend = data.money_to_spend;
+            if(Team.exists){
+                Team.maxValueToSpend = data.money_to_spend;
                 Team.allPlayers = data.players;
-            if (Team.allPlayers.length > 0){
-                Team.goalkeaper = data.goalkeeper;
-                Team.defenders = data.defenders;
-                Team.midfielders = data.midfielders;
-                Team.forwards = data.forwards;
-                Team.subs = data.subs;
+                if (Team.allPlayers.length > 0){
+                    Team.goalkeaper = data.goalkeeper;
+                    Team.defenders = data.defenders;
+                    Team.midfielders = data.midfielders;
+                    Team.forwards = data.forwards;
+                    Team.subs = data.subs;
+                    console.log(Team.defenders)
 
+                }
+                else{
+                    console.log("NO players found")
+                }
+            }
 
-            }
-            else{
-                console.log("NO players found")
-            }
 //            Team.allPlayers = Team.goalkeaper.concat(Team.defenders, Team.midfielders, Team.forwards, Team.subs);
 
 
@@ -272,6 +279,18 @@ myApp.factory('Team', function(SharedService){
 
     }
 
+    Team.deleteTeam = function(){
+        var url = '/delete_team/'
+        SharedService.makePOSTRequest(url, {}).
+            success(function(data,status,headers,config){
+                Team.init()
+            }).
+            error(function(data, status, headers, config) {
+                console.log(data)
+                alert(data.message)
+            })
+    }
+
     return Team
 });
 
@@ -355,6 +374,9 @@ function TeamCtrl($scope, Team){
 
     $scope.loadTeam = function(){
         Team.loadTeam()
+    }
+    $scope.deleteTeam = function(){
+        Team.deleteTeam()
     }
 
     $scope.doesTeamExist = function(){

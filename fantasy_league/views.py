@@ -62,15 +62,18 @@ def get_team(request):
     if not user.is_active:
         return HttpResponse(status=401)
 
-    team = user.team
-    if not team:
+    if not user.team:
         team_dict = {
             'message': 'No team exists, please create one first',
             'team_exists': False
         }
-        return general.generate_http_response(500, team_dict)
+        return general.generate_http_response(204, team_dict)
+
+    team = user.team
+
 
     team_dict = {
+        'team_id': team.id,
         'team_name': team.name,
         'team_exists': True,
         'money_to_spend': float(team.money_to_spend)
@@ -98,6 +101,7 @@ def get_team(request):
         'forwards': forwards,
         'subs': subs,
     })
+    print team_dict['subs']
     
     
     return general.generate_http_response(200, team_dict)
@@ -125,3 +129,18 @@ def save_team(request):
 
 
     return HttpResponse(status=200)
+
+@csrf_exempt
+def delete_team(request):
+    user = request.user
+    if not user.is_active:
+        return HttpResponse(status=401)
+
+    team = user.team
+    team.delete()
+    return HttpResponse(status=200)
+
+
+@csrf_exempt
+def load_player_stats(request):
+    pass
