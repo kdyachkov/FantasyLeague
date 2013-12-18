@@ -21,10 +21,21 @@ USE_TZ = False
 
 WSGI_APPLICATION = 'wsgi.application'
 
+#DATABASES = {
+#    'default': {
+#        'ENGINE': 'django.db.backends.sqlite3',
+#        'NAME': JOIN_BASE_DIR('fantasyLeague.db')
+#    }
+#}
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': JOIN_BASE_DIR('fantasyLeague.db')
+        'ENGINE':'django.db.backends.mysql',
+        'NAME': 'fantasy_league',
+        'USER': 'root',
+        'PASSWORD': '',
+        'HOST': '127.0.0.1',
+        'PORT': '3306',
     }
 }
 

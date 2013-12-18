@@ -5,11 +5,12 @@ from django.contrib.auth.models import AbstractBaseUser, UserManager, Permission
 from django.utils.http import urlquote
 from django.utils import timezone
 
-class WeeklyPoints(models.Model):
+
+class Game(models.Model):
     player = models.ForeignKey('Player')
+    week = models.ForeignKey('Week')
     position = models.ForeignKey('Position')
-    week_number = models.IntegerField(default=0)
-    points_total = models.IntegerField(default=0)
+    points = models.IntegerField(default=0)
     clean_sheet = models.IntegerField(default=0)
     saves = models.IntegerField(default=0)
     penalty_save_regulation = models.IntegerField(default=0)
@@ -22,6 +23,18 @@ class WeeklyPoints(models.Model):
     yellow_card = models.IntegerField(default=0)
     red_card = models.IntegerField(default=0)
     own_goal = models.IntegerField(default=0)
+
+
+class Week(models.Model):
+    number = models.IntegerField(default=0)
+    beginning_date = models.DateField()
+    closing_datetime = models.DateTimeField()
+
+
+#class Bonus(models.Model):
+#    player = models.ForeignKey('Player')
+#    week = models.ForeignKey(Week)
+#    bonus_points = models.DecimalField(max_digits=4, decimal_places=2, null=True)
 
 
 class Position(models.Model):
@@ -37,7 +50,7 @@ class Player(models.Model):
     primary_position = models.ForeignKey(Position, related_name='primary_position')
     init_value = models.DecimalField(max_digits=4, decimal_places=2)
     current_value = models.DecimalField(max_digits=4, decimal_places=2)
-    weekly_points = models.ManyToManyField(WeeklyPoints, related_name='points')
+    games = models.ManyToManyField(Game, related_name='weeks')
 
     def __unicode__(self):
         return self.name + " (" + self.primary_position.position + ")"

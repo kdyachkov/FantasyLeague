@@ -1,51 +1,27 @@
 # -*- coding: utf-8 -*-
 import datetime
 from south.db import db
-from south.v2 import SchemaMigration
+from south.v2 import DataMigration
 from django.db import models
+from django.conf import settings
 
-
-class Migration(SchemaMigration):
+class Migration(DataMigration):
 
     def forwards(self, orm):
-        # Adding model 'WeeklyPoints'
-        db.create_table(u'fantasy_league_weeklypoints', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('player', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['fantasy_league.Player'])),
-            ('position', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['fantasy_league.Position'])),
-            ('week_number', self.gf('django.db.models.fields.IntegerField')(default=0)),
-            ('points_total', self.gf('django.db.models.fields.IntegerField')(default=0)),
-            ('clean_sheet', self.gf('django.db.models.fields.IntegerField')(default=0)),
-            ('saves', self.gf('django.db.models.fields.IntegerField')(default=0)),
-            ('penalty_save_regulation', self.gf('django.db.models.fields.IntegerField')(default=0)),
-            ('penalty_save_tiebreaker', self.gf('django.db.models.fields.IntegerField')(default=0)),
-            ('goals_conceded', self.gf('django.db.models.fields.IntegerField')(default=0)),
-            ('goal_regulation', self.gf('django.db.models.fields.IntegerField')(default=0)),
-            ('goal_tiebreaker', self.gf('django.db.models.fields.IntegerField')(default=0)),
-            ('assist', self.gf('django.db.models.fields.IntegerField')(default=0)),
-            ('penalty_miss', self.gf('django.db.models.fields.IntegerField')(default=0)),
-            ('yellow_card', self.gf('django.db.models.fields.IntegerField')(default=0)),
-            ('red_card', self.gf('django.db.models.fields.IntegerField')(default=0)),
-            ('own_goal', self.gf('django.db.models.fields.IntegerField')(default=0)),
-        ))
-        db.send_create_signal(u'fantasy_league', ['WeeklyPoints'])
-
-        # Adding M2M table for field points on 'Player'
-        db.create_table(u'fantasy_league_player_points', (
-            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
-            ('player', models.ForeignKey(orm[u'fantasy_league.player'], null=False)),
-            ('weeklypoints', models.ForeignKey(orm[u'fantasy_league.weeklypoints'], null=False))
-        ))
-        db.create_unique(u'fantasy_league_player_points', ['player_id', 'weeklypoints_id'])
+        "Write your forwards methods here."
+        # Note: Remember to use orm['appname.ModelName'] rather than "from appname.models..."
+        for week_num, week_delta in ((x, 7*x) for x in xrange(0, 12)):
+            week = orm.Week()
+            week.number = week_num + 1  # accounting from zero-based start
+            beginning_week = settings.FIRST_WEEK + datetime.timedelta(days=week_delta)
+            week.beginning_date = beginning_week
+            beginning_datetime = datetime.datetime(beginning_week.year, beginning_week.month, beginning_week.day)
+            week.closing_datetime = beginning_datetime + datetime.timedelta(days=5, hours=12)
+            week.save()
 
 
     def backwards(self, orm):
-        # Deleting model 'WeeklyPoints'
-        db.delete_table(u'fantasy_league_weeklypoints')
-
-        # Removing M2M table for field points on 'Player'
-        db.delete_table('fantasy_league_player_points')
-
+        "Write your backwards methods here."
 
     models = {
         u'auth.group': {
@@ -68,6 +44,26 @@ class Migration(SchemaMigration):
             'model': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
         },
+        u'fantasy_league.game': {
+            'Meta': {'object_name': 'Game'},
+            'assist': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
+            'clean_sheet': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
+            'goal_regulation': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
+            'goal_tiebreaker': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
+            'goals_conceded': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'own_goal': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
+            'penalty_miss': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
+            'penalty_save_regulation': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
+            'penalty_save_tiebreaker': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
+            'player': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['fantasy_league.Player']"}),
+            'points': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
+            'position': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['fantasy_league.Position']"}),
+            'red_card': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
+            'saves': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
+            'week': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['fantasy_league.Week']"}),
+            'yellow_card': ('django.db.models.fields.IntegerField', [], {'default': '0'})
+        },
         u'fantasy_league.membership': {
             'Meta': {'object_name': 'Membership'},
             'amount_paid': ('django.db.models.fields.DecimalField', [], {'max_digits': '4', 'decimal_places': '2'}),
@@ -80,10 +76,10 @@ class Migration(SchemaMigration):
         u'fantasy_league.player': {
             'Meta': {'object_name': 'Player'},
             'current_value': ('django.db.models.fields.DecimalField', [], {'max_digits': '4', 'decimal_places': '2'}),
+            'games': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'weeks'", 'symmetrical': 'False', 'to': u"orm['fantasy_league.Game']"}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'init_value': ('django.db.models.fields.DecimalField', [], {'max_digits': '4', 'decimal_places': '2'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
-            'points': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'points'", 'symmetrical': 'False', 'to': u"orm['fantasy_league.WeeklyPoints']"}),
             'positions': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'positions'", 'symmetrical': 'False', 'to': u"orm['fantasy_league.Position']"}),
             'primary_position': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'primary_position'", 'to': u"orm['fantasy_league.Position']"})
         },
@@ -118,26 +114,14 @@ class Migration(SchemaMigration):
             'user_permissions': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'related_name': "u'user_set'", 'blank': 'True', 'to': u"orm['auth.Permission']"}),
             'username': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '254'})
         },
-        u'fantasy_league.weeklypoints': {
-            'Meta': {'object_name': 'WeeklyPoints'},
-            'assist': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
-            'clean_sheet': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
-            'goal_regulation': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
-            'goal_tiebreaker': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
-            'goals_conceded': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
+        u'fantasy_league.week': {
+            'Meta': {'object_name': 'Week'},
+            'beginning_date': ('django.db.models.fields.DateField', [], {}),
+            'closing_datetime': ('django.db.models.fields.DateTimeField', [], {}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'own_goal': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
-            'penalty_miss': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
-            'penalty_save_regulation': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
-            'penalty_save_tiebreaker': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
-            'player': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['fantasy_league.Player']"}),
-            'points_total': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
-            'position': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['fantasy_league.Position']"}),
-            'red_card': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
-            'saves': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
-            'week_number': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
-            'yellow_card': ('django.db.models.fields.IntegerField', [], {'default': '0'})
+            'number': ('django.db.models.fields.IntegerField', [], {'default': '0'})
         }
     }
 
     complete_apps = ['fantasy_league']
+    symmetrical = True

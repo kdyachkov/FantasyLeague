@@ -8,6 +8,37 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
+        # Adding model 'Game'
+        db.create_table(u'fantasy_league_game', (
+            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('player', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['fantasy_league.Player'])),
+            ('week', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['fantasy_league.Week'])),
+            ('position', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['fantasy_league.Position'])),
+            ('points', self.gf('django.db.models.fields.IntegerField')(default=0)),
+            ('clean_sheet', self.gf('django.db.models.fields.IntegerField')(default=0)),
+            ('saves', self.gf('django.db.models.fields.IntegerField')(default=0)),
+            ('penalty_save_regulation', self.gf('django.db.models.fields.IntegerField')(default=0)),
+            ('penalty_save_tiebreaker', self.gf('django.db.models.fields.IntegerField')(default=0)),
+            ('goals_conceded', self.gf('django.db.models.fields.IntegerField')(default=0)),
+            ('goal_regulation', self.gf('django.db.models.fields.IntegerField')(default=0)),
+            ('goal_tiebreaker', self.gf('django.db.models.fields.IntegerField')(default=0)),
+            ('assist', self.gf('django.db.models.fields.IntegerField')(default=0)),
+            ('penalty_miss', self.gf('django.db.models.fields.IntegerField')(default=0)),
+            ('yellow_card', self.gf('django.db.models.fields.IntegerField')(default=0)),
+            ('red_card', self.gf('django.db.models.fields.IntegerField')(default=0)),
+            ('own_goal', self.gf('django.db.models.fields.IntegerField')(default=0)),
+        ))
+        db.send_create_signal(u'fantasy_league', ['Game'])
+
+        # Adding model 'Week'
+        db.create_table(u'fantasy_league_week', (
+            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('number', self.gf('django.db.models.fields.IntegerField')(default=0)),
+            ('beginning_date', self.gf('django.db.models.fields.DateField')()),
+            ('closing_datetime', self.gf('django.db.models.fields.DateTimeField')()),
+        ))
+        db.send_create_signal(u'fantasy_league', ['Week'])
+
         # Adding model 'Position'
         db.create_table(u'fantasy_league_position', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
@@ -33,13 +64,21 @@ class Migration(SchemaMigration):
         ))
         db.create_unique(u'fantasy_league_player_positions', ['player_id', 'position_id'])
 
+        # Adding M2M table for field games on 'Player'
+        db.create_table(u'fantasy_league_player_games', (
+            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
+            ('player', models.ForeignKey(orm[u'fantasy_league.player'], null=False)),
+            ('game', models.ForeignKey(orm[u'fantasy_league.game'], null=False))
+        ))
+        db.create_unique(u'fantasy_league_player_games', ['player_id', 'game_id'])
+
         # Adding model 'Team'
         db.create_table(u'fantasy_league_team', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('name', self.gf('django.db.models.fields.CharField')(unique=True, max_length=100)),
-            ('captain', self.gf('django.db.models.fields.related.ForeignKey')(related_name='captain', to=orm['fantasy_league.Player'])),
-            ('team_points', self.gf('django.db.models.fields.DecimalField')(max_digits=6, decimal_places=2)),
-            ('money_to_spend', self.gf('django.db.models.fields.DecimalField')(max_digits=6, decimal_places=2)),
+            ('captain', self.gf('django.db.models.fields.related.ForeignKey')(related_name='captain', null=True, to=orm['fantasy_league.Player'])),
+            ('team_points', self.gf('django.db.models.fields.DecimalField')(null=True, max_digits=6, decimal_places=2)),
+            ('money_to_spend', self.gf('django.db.models.fields.DecimalField')(null=True, max_digits=6, decimal_places=2)),
         ))
         db.send_create_signal(u'fantasy_league', ['Team'])
 
@@ -89,6 +128,12 @@ class Migration(SchemaMigration):
 
 
     def backwards(self, orm):
+        # Deleting model 'Game'
+        db.delete_table(u'fantasy_league_game')
+
+        # Deleting model 'Week'
+        db.delete_table(u'fantasy_league_week')
+
         # Deleting model 'Position'
         db.delete_table(u'fantasy_league_position')
 
@@ -97,6 +142,9 @@ class Migration(SchemaMigration):
 
         # Removing M2M table for field positions on 'Player'
         db.delete_table('fantasy_league_player_positions')
+
+        # Removing M2M table for field games on 'Player'
+        db.delete_table('fantasy_league_player_games')
 
         # Deleting model 'Team'
         db.delete_table(u'fantasy_league_team')
@@ -135,6 +183,26 @@ class Migration(SchemaMigration):
             'model': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
         },
+        u'fantasy_league.game': {
+            'Meta': {'object_name': 'Game'},
+            'assist': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
+            'clean_sheet': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
+            'goal_regulation': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
+            'goal_tiebreaker': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
+            'goals_conceded': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'own_goal': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
+            'penalty_miss': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
+            'penalty_save_regulation': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
+            'penalty_save_tiebreaker': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
+            'player': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['fantasy_league.Player']"}),
+            'points': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
+            'position': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['fantasy_league.Position']"}),
+            'red_card': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
+            'saves': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
+            'week': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['fantasy_league.Week']"}),
+            'yellow_card': ('django.db.models.fields.IntegerField', [], {'default': '0'})
+        },
         u'fantasy_league.membership': {
             'Meta': {'object_name': 'Membership'},
             'amount_paid': ('django.db.models.fields.DecimalField', [], {'max_digits': '4', 'decimal_places': '2'}),
@@ -147,6 +215,7 @@ class Migration(SchemaMigration):
         u'fantasy_league.player': {
             'Meta': {'object_name': 'Player'},
             'current_value': ('django.db.models.fields.DecimalField', [], {'max_digits': '4', 'decimal_places': '2'}),
+            'games': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'weeks'", 'symmetrical': 'False', 'to': u"orm['fantasy_league.Game']"}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'init_value': ('django.db.models.fields.DecimalField', [], {'max_digits': '4', 'decimal_places': '2'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
@@ -160,12 +229,12 @@ class Migration(SchemaMigration):
         },
         u'fantasy_league.team': {
             'Meta': {'object_name': 'Team'},
-            'captain': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'captain'", 'to': u"orm['fantasy_league.Player']"}),
+            'captain': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'captain'", 'null': 'True', 'to': u"orm['fantasy_league.Player']"}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'money_to_spend': ('django.db.models.fields.DecimalField', [], {'max_digits': '6', 'decimal_places': '2'}),
+            'money_to_spend': ('django.db.models.fields.DecimalField', [], {'null': 'True', 'max_digits': '6', 'decimal_places': '2'}),
             'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '100'}),
             'players': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'players'", 'symmetrical': 'False', 'through': u"orm['fantasy_league.Membership']", 'to': u"orm['fantasy_league.Player']"}),
-            'team_points': ('django.db.models.fields.DecimalField', [], {'max_digits': '6', 'decimal_places': '2'})
+            'team_points': ('django.db.models.fields.DecimalField', [], {'null': 'True', 'max_digits': '6', 'decimal_places': '2'})
         },
         u'fantasy_league.user': {
             'Meta': {'object_name': 'User'},
@@ -183,6 +252,13 @@ class Migration(SchemaMigration):
             'team': ('django.db.models.fields.related.ForeignKey', [], {'default': 'None', 'to': u"orm['fantasy_league.Team']", 'null': 'True', 'blank': 'True'}),
             'user_permissions': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'related_name': "u'user_set'", 'blank': 'True', 'to': u"orm['auth.Permission']"}),
             'username': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '254'})
+        },
+        u'fantasy_league.week': {
+            'Meta': {'object_name': 'Week'},
+            'beginning_date': ('django.db.models.fields.DateField', [], {}),
+            'closing_datetime': ('django.db.models.fields.DateTimeField', [], {}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'number': ('django.db.models.fields.IntegerField', [], {'default': '0'})
         }
     }
 
