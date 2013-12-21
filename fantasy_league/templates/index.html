@@ -7,8 +7,8 @@
 
 
     <nav class="navbar navbar-default" role="navigation">
-        <button class="btn btn-primary">Team</button>
-        <button class="btn btn-primary">Admin</button>
+        <a href="/team" class="btn btn-primary">Team</a>
+        <a href="/games" class="btn btn-primary">Games</a>
         <div class="navbar-right">
             {% if user.is_authenticated %}
                 <p>Welcome, {{ user.first_name }} {{ user.last_name }}!</p>
@@ -20,19 +20,19 @@
         </div>
     </nav>
     {% if user.is_authenticated %}
-    {% verbatim %}
-	<div class='container'>
+    <div class='container'>
+        {% if team %}
 		<div class="row">
-
-            <div ng-include src="'/static/partials/manage-team.html'"></div>
+        {% verbatim %}
+	        <div ng-include src="'/static/partials/manage-team.html'"></div>
             <div ng-include src="'/static/partials/players-list.html'"></div>
-		
+        {% endverbatim %}
         </div>
-
-        <div ng-include src="'/static/partials/manage-games.html'"></div>
+        {% elif games %}
+            <div ng-include src="'/static/partials/manage-games.html'"></div>
+        {% endif %}
 
 	</div>
-   {% endverbatim %}
    {% endif %}
 </body>
 

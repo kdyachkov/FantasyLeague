@@ -15,6 +15,14 @@ def index(request):
     context = RequestContext(request, {})
     return render_to_response('index.html', context_instance=context)
 
+def render_team(request):
+    context = RequestContext(request, {'team': True})
+    return render_to_response('index.html', context_instance=context)
+
+def render_games(request):
+    context = RequestContext(request, {'games': True})
+    return render_to_response('index.html', context_instance=context)
+
 
 def logoff(request):
     logout(request)
