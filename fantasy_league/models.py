@@ -9,7 +9,7 @@ from django.utils import timezone
 
 class Game(models.Model):
     player = models.ForeignKey('Player')
-    week = models.ForeignKey('Week')
+    week_number = models.IntegerField()
     position = models.ForeignKey('Position')
     points = models.IntegerField(default=0)
     clean_sheet = models.IntegerField(default=0)
@@ -26,10 +26,10 @@ class Game(models.Model):
     own_goal = models.IntegerField(default=0)
 
 
-class Week(models.Model):
-    number = models.IntegerField(default=0)
-    beginning_date = models.DateField()
-    closing_datetime = models.DateTimeField()
+#class Week(models.Model):
+#    number = models.IntegerField(default=0)
+#    beginning_date = models.DateField()
+#    closing_datetime = models.DateTimeField()
 
 
 #class Bonus(models.Model):
@@ -145,7 +145,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 admin.site.register(Position)
 admin.site.register(Player)
-admin.site.register(Week)
+#admin.site.register(Week)
 admin.site.register(Game)
 admin.site.register(Team)
 admin.site.register(Membership)

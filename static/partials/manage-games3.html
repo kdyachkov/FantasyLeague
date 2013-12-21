@@ -1,0 +1,26 @@
+<div ng-controller="GamesCtrl" class="table-responsive">
+    <table ng-table="tableParams" show-filter="true" class="table">
+        <!-- <tr ng-repeat="user in $data">
+            <td data-title="'Name'" sortable="'name'" filter="{ 'name': 'text' }">
+                {{user.name}}
+            </td>
+            <td data-title="'Pos'" sortable="'age'" filter="{ 'age': 'text' }">
+                {{user.primary_position}}
+            </td>
+        </tr> -->
+
+        <tr ng-repeat="user in $data">
+            <!-- <td data-title="'NAME'" filter="{'name': 'text'}">
+                {{user.name}}
+            </td>
+            <td data-title="'NAME'">
+            {{user.primary_position}}
+            </td> -->
+            <td ng-repeat="column in columns" data-title="column.title">
+            <input type="text" ng-model="params.filter()[name]" ng-if="filter=='text'" class="input-filter form-control ng-scope ng-pristine ng-valid">
+                {{ user[column.field] }}
+                
+            </td>
+        </tr>
+    </table>
+</div>  

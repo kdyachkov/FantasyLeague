@@ -25,7 +25,7 @@ myApp.factory('SharedService', function($rootScope, $http){
 
 myApp.factory('Players', function(SharedService){
     var Players = {};
-
+    Players.players = [];
     var method = 'POST';
     var url = '/get_players/';
     // $http({method: 'GET', url: url}).
@@ -54,6 +54,10 @@ myApp.factory('Players', function(SharedService){
         else if (Players.playersToShow === 'M'){return Players.midfielders}
         else if (Players.playersToShow === 'F'){return Players.forwards}
         else if (Players.playersToShow === 'S'){return Players.players}
+    }
+
+    Players.getAllPlayers = function(){
+        return Players.players
     }
 
     return Players;
@@ -382,4 +386,62 @@ function TeamCtrl($scope, Team){
     $scope.doesTeamExist = function(){
         return Team.doesTeamExist();
     }
+}
+
+function GamesCtrl($scope, $timeout, $filter, ngTableParams, Players){
+
+        $scope.filterText = ''
+        $scope.saveUser = function(user){
+            console.log(user)
+        }
+        $scope.columns = [
+            { title: 'Name', abbr: "Name", field: 'name', editable:false, visible: true, filter: { 'name': 'text' } },
+            { title: 'Position', abbr: "Pos", field: 'primary_position', editable:false, visible: true },
+            { title: 'Clean Sheet', abbr: "CS", field: 'clean_sheet', editable:true, visible: true },
+            { title: 'Saves', abbr: "SV", field: 'saves', editable:true, visible: true },
+            { title: 'Penalty Save Regulation', abbr:'PSR', field: 'penalty_save_regulation', editable:true, visible: true },
+            { title: 'Penalty Save Tie', abbr:'PST', field: 'penalty_save_tiebreaker', editable:true, visible: true },
+            { title: 'Goals Conceded', abbr:'GC', field: 'goals_conceded', editable:true, visible: true },
+            { title: 'Goal', abbr:'G', field: 'goal', editable:true, visible: true },
+            { title: 'Goal Tie', abbr:'GT', field: 'goal_tiebreaker', editable:true, visible: true },
+            { title: 'Assist', abbr:'A', field: 'assist', editable:true, visible: true },
+            { title: 'Penalty Miss', abbr:'PM', field: 'penalty_miss', editable:true, visible: true },
+            { title: 'Yellow Card', abbr:'Y', field: 'yellow_card', editable:true, visible: true },
+            { title: 'Red Card', abbr:'R', field: 'red_card', editable:true, visible: true },
+            { title: 'Own Goal', abbr:'OG', field: 'own_goal', editable:true, visible: true },
+            { title: 'Actions', abbr:'Actions', field: '', editable:false, visible: true },
+        ];
+
+        $scope.$watch(Players.getAllPlayers, function (newVal, oldVal, scope) {
+            if(newVal!==null){
+                $scope.tableParams.reload();
+            }
+        });
+
+        $scope.$watch('filterText', function(newVal, oldVal, scope){
+            if(newVal){
+                $scope.tableParams.reload();  //TODO: this is too slow
+            }
+        })
+
+        $scope.tableParams = new ngTableParams({
+            page: 1,            // show first page
+            count: 40           // count per page
+            },
+
+            {
+            total: function () { return $scope.rows.length; }, // length of data
+            groupBy: 'primary_position',
+            getData: function($defer, params) {
+                // $timeout(function() {
+                var data = Players.players
+                params.total(data.length);
+                data = $scope.filterText ? $filter('filter')(data, $scope.filterText) : data;
+                // data = params.filter() ? $filter('filter')(data, params.filter()) : data;
+                data = params.sorting() ? $filter('orderBy')(data, params.orderBy()) : data;
+
+                $defer.resolve(data.slice((params.page() - 1) * params.count(), params.page() * params.count()));
+                    // }, 1000);
+                }
+            });
 }

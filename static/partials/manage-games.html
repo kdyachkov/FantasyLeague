@@ -1,0 +1,46 @@
+<div ng-controller="GamesCtrl" class="table-responsive">
+<input type="text" ng-model="filterText">
+{{filterText}}
+    <table ng-table="tableParams" show-filter="true"  class="table table-bordered table-hover table-condensed">
+        <thead>
+    <tr>
+        <th width="70" ng-repeat="column in columns" ng-show="column.visible"
+            class="text-center sortable" ng-class="{
+                'sort-asc': tableParams.isSortBy(column.field, 'asc'),
+                'sort-desc': tableParams.isSortBy(column.field, 'desc')
+              }"filter="{ 'name': 'text' }"
+            ng-click="tableParams.sorting(column.field, tableParams.isSortBy(column.field, 'asc') ? 'desc' : 'asc')">
+            <span rel="tooltip" data-placement="bottom" data-original-title="{{column.title}}">{{ column.abbr }}</span>
+        </th>
+    </tr>
+    </thead>
+    <tbody ng-repeat="group in $groups">
+        <tr class="ng-table-group">
+            <td colspan="{{columns.length}}+1">
+                <a href="" ng-click="group.$hideRows = !group.$hideRows">
+                    <span class="glyphicon" ng-class="{ 'glyphicon-chevron-right': group.$hideRows, 'glyphicon-chevron-down': !group.$hideRows }"></span>
+                    <strong>{{ group.value }}</strong>
+                </a>
+            </td>
+        </tr>
+        <tr ng-hide="group.$hideRows" ng-repeat="user in group.data">
+            <td width="70" ng-repeat="column in columns" ng-show="column.visible" sortable="column.field">
+                <div ng-if = "column.editable == true">
+                    <span ng-if="!user.$edit">{{ user[column.field] }}</span>
+                    <div ng-if="user.$edit"><input class="form-control" type="number" ng-model="user[column.field]" /></div>
+                </div>
+                <div ng-if="column.editable == false">
+                    {{ user[column.field] }}
+                </div>
+                <div ng-if="column.title === 'Actions'">
+                    <a ng-if="!user.$edit" href="" class="btn btn-success btn-xs" ng-click="user.$edit = true">Edit</a>
+                    <a ng-if="user.$edit" href="" class="btn btn-primary btn-xs" ng-click="user.$edit = false; saveUser(user)">Save</a>
+                    <a ng-if="user.$edit" href="" class="btn btn-default btn-xs" ng-click="user.$edit = false">Cancel</a>
+                </div>
+
+            </td>
+        </tr>
+    </tbody>
+
+    </table>
+</div>

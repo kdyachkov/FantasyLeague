@@ -7,6 +7,8 @@
 
 
     <nav class="navbar navbar-default" role="navigation">
+        <button class="btn btn-primary">Team</button>
+        <button class="btn btn-primary">Admin</button>
         <div class="navbar-right">
             {% if user.is_authenticated %}
                 <p>Welcome, {{ user.first_name }} {{ user.last_name }}!</p>
@@ -22,107 +24,16 @@
 	<div class='container'>
 		<div class="row">
 
+            <div ng-include src="'/static/partials/manage-team.html'"></div>
+            <div ng-include src="'/static/partials/players-list.html'"></div>
+		
+        </div>
 
-		  <div class="col-md-6" ng-controller="TeamCtrl" ng-init="loadTeam()">
-            <!-- <ul ng-repeat="player in showAllPlayers()">
-                <li>{{player.name}} - {{player.position}} - {{player.init_value}}</li>
-            </ul> -->
+        <div ng-include src="'/static/partials/manage-games.html'"></div>
 
-            <div class="new-team-input" ng-show="!doesTeamExist()">
-                <input type="text" ng-model="name">
-                <button class="btn btn-primary" ng-click="createTeam()">Create New Team {{ name }}</button>
-            </div>
-            <div class="table-responsive" ng-show="doesTeamExist()">
-                <h3>{{ getTeamName() }}</h3>
-                <table class="table table-striped table-bordered table-condensed">
-                    <tr>
-                        <td>Goalkeeper</td>
-                        <td>
-                            <div class='teamplayers' ng-repeat='player in getGoalkeeper()'>
-                                <teamplayer player='player'></teamplayer>
-                            </div>
-                            <addplayers position='GK'></addplayers>
-                        <!-- <button class="btn" ng-repeat="i in _.range(getGoalkeeper().length,getMaxGoalkeepers())">Add</button> -->
-                        <!-- <li ng-repeat="n in [] | range:5:10">{{n}}</li> -->
-                        
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Defenders</td>
-                        <td>
-                            <div class='teamplayers' ng-repeat='player in getDefenders()'>
-                                <teamplayer player='player'></teamplayer>
-                            </div>
-
-                        <addplayers position='D'></addplayers>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Midfielders</td>
-                        <td>
-                        <div class='teamplayers' ng-repeat='player in getMidfielders()'>
-                                <teamplayer player='player'></teamplayer>
-                            </div>
-                            <addplayers position='M'></addplayers>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Forwards</td>
-                        <td>
-                            <div class='teamplayers' ng-repeat='player in getForwards()'>
-                                <teamplayer player='player'></teamplayer>
-                            </div>
-                            <addplayers position='F'></addplayers>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Bench</td>
-                        <td>
-                            <div class='teamplayers' ng-repeat='player in getSubs()'>
-                                <teamplayer player='player'></teamplayer>
-                            </div>
-                            <addplayers position='S'></addplayers>
-                        </td>
-                    </tr>
-                </table>
-                <div>Total value used {{getTotalValue()}} (out of {{getMaxValueToSpend()}})</div>
-                <button class='btn btn-primary' ng-click='saveTeam()'>Save Team</button>
-                <button class='btn btn-danger' ng-click="deleteTeam()">Delete Team</button>
-            </div>
-
-		  </div>
-
-          <div class="col-md-6" ng-controller="PlayersCtrl">
-	  		  <div class='container'>
-                <position position="ALL" ng-click="udatePlayersTable('ALL')"></position>
-                <position position="GK" ng-click="udatePlayersTable('GK')"></position>
-                <position position="D" ng-click="udatePlayersTable('D')"></position>
-                <position position="M" ng-click="udatePlayersTable('M')"></position>
-                <position position="F" ng-click="udatePlayersTable('F')"></position>
-			    <!-- <input type="text" ng-model="search.position"> -->
-                <div class="table-responsive">
-    			    <table class="table table-striped table-bordered table-condensed players-table">
-    			        <tr ng-repeat="player in getPlayers() | orderBy: 'name'">
-    			            <td>{{ player.name }}</td>
-    			            <td>{{ player.positions }}</td>
-    			            <td>{{ player.init_value }}</td>
-                            <td> 
-                                <player player="player" position="{{positionsToShow()}}"></player>
-                            </td>
-    			        </tr>
-    			    </table>
-                </div>
-
-			</div>
-		  </div>
-		</div>
 	</div>
    {% endverbatim %}
    {% endif %}
-
-
-    
-    
 </body>
 
 {% endblock %}

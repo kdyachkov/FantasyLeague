@@ -1,0 +1,39 @@
+<div ng-controller="GamesCtrl" class="table-responsive">
+    <table ng-table="tableParams" show-filter="true"  class="table table-bordered table-hover table-condensed">
+    <thead>
+        <tr>
+            <th width="70" ng-repeat="column in columns" ng-show="column.visible"
+                class="text-center sortable" ng-class="{
+                    'sort-asc': tableParams.isSortBy(column.field, 'asc'),
+                    'sort-desc': tableParams.isSortBy(column.field, 'desc')
+                  }"
+                ng-click="tableParams.sorting(column.field, tableParams.isSortBy(column.field, 'asc') ? 'desc' : 'asc')">
+                <span rel="tooltip" data-placement="bottom" filter="{ 'name': 'text' }" data-original-title="{{column.title}}">{{ column.abbr }}</span>
+            </th>
+            <th width="70">
+                Actions
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr ng-repeat="user in $data">
+            <td width="70" ng-repeat="column in columns" ng-show="column.visible" filter="{ 'name': 'text' }" sortable="column.field">
+                <div ng-if = "column.editable == true">
+                    <span ng-if="!user.$edit">{{ user[column.field] }}</span>
+                    <div ng-if="user.$edit"><input class="form-control" type="number" ng-model="user[column.field]" /></div>
+                </div>
+                <div ng-if="column.editable == false">
+                    {{ user[column.field] }}
+                </div>
+
+            </td>
+            <td width="70">
+                <a ng-if="!user.$edit" href="" class="btn btn-default btn-xs" ng-click="user.$edit = true">Edit</a>
+                <a ng-if="user.$edit" href="" class="btn btn-primary btn-xs" ng-click="user.$edit = false; saveUser(user)">Save</a>
+                <a ng-if="user.$edit" href="" class="btn btn-default btn-xs" ng-click="user.$edit = false">Cancel</a>
+            </td>
+        </tr>
+    </tbody>
+
+    </table>
+</div>  

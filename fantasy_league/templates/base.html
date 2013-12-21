@@ -9,17 +9,25 @@
 	<link rel="stylesheet" type="text/css" media="screen" href="/static/css/bootstrap-theme.css">
 	<link rel="stylesheet" type="text/css" media="screen" href="/static/css/style.css">
 	<link rel="stylesheet" type="text/css" media="screen" href="/static/css/zocial.css">
+	<link rel="stylesheet" type="text/css" media="screen" href="/static/css/ng-table.css">
     <script type="text/javascript" src="/static/js/lib/jquery_110.min.js"></script>
 	<script type="text/javascript" src="/static/js/lib/bootstrap.js"></script>
 	<script type="text/javascript" src="/static/js/lib/underscore_152.js"></script>
     <script type="text/javascript" src="/static/js/lib/angular_123.js"></script>
     <script type="text/javascript" src="/static/js/lib/angular-cookies.js"></script>
-    
+    <script type="text/javascript" src="/static/js/lib/ng-table.src.js"></script>
+
     <script type="text/javascript" src="/static/js/app.js"></script>
     <script type="text/javascript" src="/static/js/filters.js"></script>
 
     <script type="text/javascript" src="/static/js/controllers.js"></script>
     <script type="text/javascript" src="/static/js/directives.js"></script>
+
+    <script type="text/javascript">
+    $(function () {
+        $('[rel=tooltip]').tooltip({container: 'body'});
+    });
+</script>
 </head>
 
 {% block body %}{% endblock %}

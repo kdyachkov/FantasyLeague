@@ -1,0 +1,22 @@
+<div class="col-md-6" ng-controller="PlayersCtrl">
+    <div class='container'>
+        <position position="ALL" ng-click="udatePlayersTable('ALL')"></position>
+        <position position="GK" ng-click="udatePlayersTable('GK')"></position>
+        <position position="D" ng-click="udatePlayersTable('D')"></position>
+        <position position="M" ng-click="udatePlayersTable('M')"></position>
+        <position position="F" ng-click="udatePlayersTable('F')"></position>
+        <!-- <input type="text" ng-model="search.position"> -->
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered table-condensed players-table">
+                <tr ng-repeat="player in getPlayers() | orderBy: 'name'">
+                    <td>{{ player.name }}</td>
+                    <td>{{ player.positions }}</td>
+                    <td>{{ player.init_value }}</td>
+                    <td> 
+                        <player player="player" position="{{positionsToShow()}}"></player>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>

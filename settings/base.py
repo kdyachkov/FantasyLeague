@@ -117,5 +117,55 @@ STATICFILES_FINDERS = (
     'compressor.finders.CompressorFinder'
 )
 
+'''
+App specific settings
+'''
+
 MAX_TEAM_STARTING_VALUE = 50
+
+POINTS_RULES = {
+    'ALL': {
+        'assist': {'points': 3},
+        'penalty_miss': {'points': -1},
+        'yellow_card': {'points': -1},
+        'red_card': {'points': -2},
+        'own_goal': {'points': -3},
+
+    },
+    'GK': {
+        'clean_sheet': {'points': 4},
+        'saves': {'points': 2, 'min': 2},
+        'goal_regulation': {'points': 6},
+        'goal_tiebreaker': {'points': 1},
+        'assist': {'points': 4},
+        'penalty_save_regulation': {'points': 3},
+        'penalty_save_tiebreaker': {'points': 1},
+        'goals_conceded': {'points': -1, 'min': 2},
+    },
+    'D': {
+        'clean_sheet': {'points': 3},
+        'goal_regulation': {'points': 5},
+        'goal_tiebreaker': {'points': 1},
+        'goals_conceded': {'points': -1, 'min': 2},
+    },
+    'M': {
+        'clean_sheet': {'points': 2},
+        'goal_regulation': {'points': 4},
+        'goal_tiebreaker': {'points': 1},
+    },
+    'F': {
+        'clean_sheet': {'points': 1},
+        'goal_regulation': {'points': 3},
+        'goal_tiebreaker': {'points': 1},
+    },
+}
+
+
+def get_points(position, criteria):
+    if criteria in POINTS_RULES[position]:
+        return POINTS_RULES[position][criteria]
+    elif criteria in POINTS_RULES['ALL']:
+        return POINTS_RULES['ALL'][criteria]
+    else:
+        raise Exception("Points criteria '%s' doesn't exist for position '%s" %(criteria, position))
 

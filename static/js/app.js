@@ -16,7 +16,7 @@
 //     $httpProvider.defaults.headers.post['X-CSRFToken'] = $('input[name=csrfmiddlewaretoken]').val();
 // });
 
-var myApp = angular.module('myApp', ['ngCookies']).
+var myApp = angular.module('myApp', ['ngCookies', 'ngTable']).
     config([
     '$httpProvider', 
     '$interpolateProvider', 
